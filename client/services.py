@@ -16,25 +16,19 @@ def showServices(request):
             try:
                 print(request.POST[obj.service_name])
                 print(obj.service_cost)
-                serObj = CustService.objects.create(
-                service_name = request.POST[obj.service_name],
-                service_price = obj.service_cost,
-                status = "Pending",
-                service_provider = "1"
-                )
-                id = 1
-                cust = Customer.objects.get(id = id)
-                cust.services_requested.append(serObj)
-                cust.save()
-
+                ser = Serviceprovider.objects.get(id = 1)
+                if ser.applied_service == []:
+                    asid = 1
+                else:
+                    asid = ser.applied_service[len((ser.applied_service))].asid + 1
+                print(ser)
                 aplser = Appliedservice.objects.create(
-                    customer_id = id,
+                    asid = asid,
+                    customer_id = 1,
                     service_id = obj.sid,
                     comments = [],
                     status = "Pending"
-                )
-
-                ser = Serviceprovider.objects.get(id = 1)
+                )                
                 ser.applied_service.append(aplser)
                 ser.save()
             except:

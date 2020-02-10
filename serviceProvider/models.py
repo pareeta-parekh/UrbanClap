@@ -14,13 +14,13 @@ class Address(models.Model):
     zipcode = models.IntegerField()
 
 
-class CustService(models.Model):
-    service_name = models.CharField(max_length=255, blank=False, null=False)
-    service_price = models.IntegerField(blank=False, null=False)
-    status = models.CharField(max_length=30, blank=False, null=False)
-    service_provider = models.CharField(max_length=30, blank=False, null=False)
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=False)
+# class CustService(models.Model):
+#     service_name = models.CharField(max_length=255, blank=False, null=False)
+#     service_price = models.IntegerField(blank=False, null=False)
+#     status = models.CharField(max_length=30, blank=False, null=False)
+#     service_provider = models.CharField(max_length=30, blank=False, null=False)
+#     created_at = models.DateTimeField(auto_now_add=True, editable=False)
+#     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
 
 class Customer(models.Model):
@@ -30,10 +30,8 @@ class Customer(models.Model):
     email = models.EmailField(blank=False, null=False, unique=True)
     phone = models.IntegerField(null=False, blank=False)
     address = EmbeddedModelField(model_container=Address)
-    services_requested = ArrayModelField(model_container=CustService)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-
 
 class ServiceList(models.Model):
     sid = models.IntegerField(null=False, blank=False)
@@ -49,6 +47,7 @@ class Appsercomment(models.Model):
     text = models.CharField(max_length=255)
 
 class Appliedservice(models.Model):
+    asid = models.IntegerField(null=False, blank=False)
     customer_id = models.IntegerField(null=False, blank=False)
     service_id =  models.IntegerField(null=False, blank=False)
     comments = ArrayModelField(model_container=Appsercomment)
