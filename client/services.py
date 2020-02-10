@@ -1,4 +1,4 @@
-from UrbanClapNew.models import *
+from serviceProvider.models import *
 from .serializers import *
 from django.shortcuts import render
 from rest_framework.decorators import api_view
@@ -9,7 +9,7 @@ def showServices(request):
     services = ServiceList.objects.all()
     if request.method == 'GET':
         context = {"services": services}
-        return render(request, "selectService.html", context)
+        return render(request, "showlist.html", context)
 
     if request.method == 'POST':
         for obj in services:

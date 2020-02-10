@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from UrbanClapNew.models import *
+from serviceProvider.models import *
 from .serializers import *
 
 @api_view(['GET', 'POST'])

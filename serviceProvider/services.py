@@ -1,4 +1,4 @@
-from UrbanClapNew.models import *
+from .models import *
 from .serializers import *
 from django.shortcuts import render
 from rest_framework.decorators import api_view
