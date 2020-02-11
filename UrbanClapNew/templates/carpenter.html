@@ -1,20 +1,48 @@
 {% extends 'category.html' %}
 
 {% block carpenter %}
-    {% for objects in obj %}
-        <ul>
-            <li>{{objects.service_name}}</li>
-            <p>{{objects.service_cost}}</p>
-            <p>{{objects.service_desc}}</p>
-        </ul>
-    {% endfor%}
-    <script>
-        $(document).ready(function(){
-            $("p").hide();
-        $("li").click(function(){
-            $("p").toggle();
-          });
-        });
-    </script>
+{% for objects in obj %}
+<ul>
+    <li style="cursor: pointer;" id="li_{{objects.sid}}">{{objects.service_name}}</li>
+    <p id="cost_{{objects.sid}}">{{objects.service_cost}}</p>
+    <p id="desc_{{objects.sid}}">{{objects.service_desc}}</p>
+    <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
+</ul>
+<script>
+    $(document).ready(function(){
+        $("#cost_{{objects.sid}}").hide();
+        $("#desc_{{objects.sid}}").hide();
+        $("#{{objects.spid}}_{{objects.sid}}").hide();
+    $("#li_{{objects.sid}}").click(function(){
+        $("#cost_{{objects.sid}}").toggle();
+        $("#desc_{{objects.sid}}").toggle();
+        $("#{{objects.spid}}_{{objects.sid}}").toggle();
+      });
+    });
+</script>
+{% endfor%}
+
+<script>
+function getId(ids)
+{
+        var idname , num;
+        console.log(ids)
+        idname = document.getElementById(ids);
+        console.log(idname);
+        num = ids.split("_");
+        //num2 = ids.substring(0,6);
+        console.log(num[0]);
+        console.log(num[1]);
+         $.ajax({
+            type:"get",
+            url: "/client/showService/",
+            data:{
+                    provider_id : num[0],
+                    service_id : num[1]
+                }
+        })
+}
+</script>
+
 {% endblock %}
 

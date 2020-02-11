@@ -26,7 +26,7 @@ class SPSerializer(serializers.ModelSerializer):
 class AddServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceList
-        fields = ['service_category' , 'service_name', 'service_desc', 'service_cost']
+        fields = ['service_category', 'service_name', 'service_desc', 'service_cost']
     
     def create(self, validated_data):
         serviceobj = ServiceList.objects.create(

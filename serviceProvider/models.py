@@ -22,7 +22,6 @@ class CustService(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
-
 class Customer(models.Model):
     token_id = models.CharField(max_length = 255 , null = True)
     user_name = models.CharField(max_length=30, blank=False, null=False)
@@ -34,7 +33,6 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
-
 class ServiceList(models.Model):
     sid = models.IntegerField(null=False, blank=False)
     spid = models.IntegerField(null=False, blank=False)
@@ -42,6 +40,7 @@ class ServiceList(models.Model):
     service_name = models.CharField(max_length=120, null=False, blank=False)
     service_desc = models.CharField(max_length=255, null=False, blank=False)
     service_cost = models.IntegerField(null=False, blank=False)
+    is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=True)
 
@@ -51,6 +50,7 @@ class Appsercomment(models.Model):
     text = models.CharField(max_length=255)
 
 class Appliedservice(models.Model):
+    asid = models.IntegerField(null=False, blank=False)
     customer_id = models.IntegerField(null=False, blank=False)
     service_id =  models.IntegerField(null=False, blank=False)
     comments = ArrayModelField(model_container=Appsercomment)
