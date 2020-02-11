@@ -3,7 +3,7 @@
 {% block salon %}
 {% for objects in obj %}
 <ul>
-    <li id="li_{{objects.sid}}">{{objects.service_name}}</li>
+    <li style="cursor: pointer;" id="li_{{objects.sid}}">{{objects.service_name}}</li>
     <p id="cost_{{objects.sid}}">{{objects.service_cost}}</p>
     <p id="desc_{{objects.sid}}">{{objects.service_desc}}</p>
     <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
@@ -43,6 +43,7 @@ function getId(ids)
         })
 }
 </script>
+
 
 {% endblock %}
 

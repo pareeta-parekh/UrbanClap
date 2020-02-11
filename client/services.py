@@ -27,6 +27,7 @@ def showServices(request):
             obj = ServiceList.objects.get(sid = sid , spid = pk)
             print("--------------obj---------" , obj)
             serObj = CustService.objects.create(
+                    cust_id = int(id),
                     service_name = obj.service_name,
                     service_price = obj.service_cost,
                     status = "Pending",
@@ -88,3 +89,14 @@ def categoryShow(request):
             # return render(request , "category.html")
             pass
     return render(request, "category.html")
+
+
+def deleteService(request):
+    name = ""
+    delObj = CustService.objects.get(service_name = name)
+    if delObj.status == "Pending":
+        delObj.is_deleted = True
+        return Response("Deleted!")
+    else:
+        return Response("Invalid Request")
+
