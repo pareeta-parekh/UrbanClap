@@ -37,6 +37,8 @@ class Customer(models.Model):
 
 class ServiceList(models.Model):
     sid = models.IntegerField(null=False, blank=False)
+    spid = models.IntegerField(null=False, blank=False)
+    service_category = models.CharField(max_length=120, null=False, blank=False)
     service_name = models.CharField(max_length=120, null=False, blank=False)
     service_desc = models.CharField(max_length=255, null=False, blank=False)
     service_cost = models.IntegerField(null=False, blank=False)

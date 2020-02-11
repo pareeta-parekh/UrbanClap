@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from UrbanClapNew.models import *
+from .models import *
 
 class SPSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,12 +25,14 @@ class SPSerializer(serializers.ModelSerializer):
 
 class AddServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Service
-        fields = ['service_name', 'service_desc', 'service_cost']
+        model = ServiceList
+        fields = ['service_category' , 'service_name', 'service_desc', 'service_cost']
     
     def create(self, validated_data):
-        serviceobj = Service.objects.create(
+        serviceobj = ServiceList.objects.create(
             sid = self.context[1],
+            spid = self.context[2],
+            service_category = validated_data['service_category'],
             service_name = validated_data['service_name'],
             service_desc = validated_data['service_desc'],
             service_cost = validated_data['service_cost']

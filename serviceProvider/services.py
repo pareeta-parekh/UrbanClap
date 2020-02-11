@@ -1,26 +1,25 @@
-from UrbanClapNew.models import *
 from .serializers import *
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from serviceProvider.models import *
+from .models import *
 
 
 @api_view(['GET', 'POST'])
-def addservice(request):
+def addservice(request , pk):
     if request.method == "GET":
         return Response("All data here")
     
     if request.method == "POST":
-        spid = 1
         condata = []
-        spobj = Serviceprovider.objects.get(id = spid)
+        spobj = Serviceprovider.objects.get(pk = pk)
         condata.append(spobj)
         if spobj.services == []:
             sid = 1
         else:
             sid = spobj.services[len(spobj.services) - 1].sid + 1
         condata.append(sid)
+        condata.append(pk)
         service = AddServiceSerializer(data = request.data, context = condata)
         if service.is_valid():
             service.save()

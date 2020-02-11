@@ -1,0 +1,20 @@
+{% extends 'category.html' %}
+
+{% block carpenter %}
+    {% for objects in obj %}
+        <ul>
+            <li>{{objects.service_name}}</li>
+            <p>{{objects.service_cost}}</p>
+            <p>{{objects.service_desc}}</p>
+        </ul>
+    {% endfor%}
+    <script>
+        $(document).ready(function(){
+            $("p").hide();
+        $("li").click(function(){
+            $("p").toggle();
+          });
+        });
+    </script>
+{% endblock %}
+
