@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from serviceProvider.models import *
 from .serializers import *
 
+from rest_framework.authtoken.models import Token
+from django.core.exceptions import ObjectDoesNotExist
+from random import sample
+
 @api_view(['GET', 'POST'])
 def register(request):
 
@@ -42,7 +46,38 @@ def login(request):
     if request.method == 'POST':
         email = request.data['email']
         password = request.data['password']
-        logclient = Customer.objects.get(email=email, password=password)
-        if logclient != "":
-            return Response("logged In!")
-        return Response("Error!!!")
+
+        try:
+            cust = Customer.objects.get(email=email, password=password)
+            
+            if cust.token_id == None:
+                sequence = [i for i in range(100)]
+                smple = sample(sequence, 5)
+                user_token = ''.join(map(str, smple))
+
+                token, created = Token.objects.get_or_create(user_id = user_token)
+
+                if not created:
+                    token.created = user_token
+                    token.save()
+
+                cust.token_id = token.key
+                cust.save()
+
+                return Response({'message': 'You are LoggedIn...'})
+
+            else:
+                return Response({'message': 'You are already LoggedIn...'})
+
+        except ObjectDoesNotExist:
+            return Response({'message': 'Email not found...'})
+
+@api_view(['GET'])
+def logout(request, token):
+    try:
+        cust = Customer.objects.get(token_id = token)
+        cust.token_id = None
+        cust.save()
+        return Response({'message': 'Logged out...'})
+    except ObjectDoesNotExist:
+        return Response({'message': 'Record not found...'})

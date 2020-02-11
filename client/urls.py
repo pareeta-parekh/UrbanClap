@@ -7,6 +7,7 @@ from .views import *
 urlpatterns = [
     path('register/', register),
     path('login/' , login),
+    path('logout/<str:token>/', logout),
     path('showService/' , showServices),
-    path('category/' , categoryShow ),
+    path('category/<str:token>/' , categoryShow ),
 ]
