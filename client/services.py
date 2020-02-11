@@ -14,14 +14,20 @@ def showServices(request):
             sid = request.GET['service_id']
             pk = request.GET['provider_id']
             print("sid", sid)
+            ser = Serviceprovider.objects.get(id=1)
+            if ser.applied_service == []:
+                asid = 1
+            else:
+                asid = ser.applied_service[len(ser.applied_service) - 1].asid + 1
+
             aplser = Appliedservice.objects.create(
+                asid = asid,
                 customer_id=int(id),
                 service_id=int(sid),
                 comments=[],
                 status="Pending"
             )
             print("aplser " , aplser)
-            ser = Serviceprovider.objects.get(id=1)
             ser.applied_service.append(aplser)
             ser.save()
             obj = ServiceList.objects.get(sid = sid , spid = pk)
