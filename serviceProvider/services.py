@@ -3,7 +3,7 @@ from .serializers import *
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from serviceProvider.models import *
+from .models import *
 
 
 @api_view(['GET', 'POST'])

@@ -4,36 +4,87 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-@api_view(['GET', 'POST'])
+
+@api_view(['GET'])
 def showServices(request):
-    services = ServiceList.objects.all()
     if request.method == 'GET':
-        context = {"services": services}
-        return render(request, "showlist.html", context)
-
-    if request.method == 'POST':
-        for obj in services:
-            try:
-                print(request.POST[obj.service_name])
-                print(obj.service_cost)
-                ser = Serviceprovider.objects.get(id = 1)
-                if ser.applied_service == []:
-                    asid = 1
-                else:
-                    asid = ser.applied_service[len((ser.applied_service))].asid + 1
-                print(ser)
-                aplser = Appliedservice.objects.create(
-                    asid = asid,
-                    customer_id = 1,
-                    service_id = obj.sid,
-                    comments = [],
-                    status = "Pending"
-                )                
-                ser.applied_service.append(aplser)
-                ser.save()
-            except:
-                print("unchecked")
-
-           
-            
+        id = 1
+        print("-------- in show service get-----------")
+        try:
+            sid = request.GET['service_id']
+            pk = request.GET['provider_id']
+            print("sid", sid)
+            aplser = Appliedservice.objects.create(
+                customer_id=int(id),
+                service_id=int(sid),
+                comments=[],
+                status="Pending"
+            )
+            print("aplser " , aplser)
+            ser = Serviceprovider.objects.get(id=1)
+            ser.applied_service.append(aplser)
+            ser.save()
+            obj = ServiceList.objects.get(sid = sid , spid = pk)
+            print("--------------obj---------" , obj)
+            serObj = CustService.objects.create(
+                    service_name = obj.service_name,
+                    service_price = obj.service_cost,
+                    status = "Pending",
+                    service_provider = obj.spid
+                    )
+            cust = Customer.objects.get(id = id)
+            cust.services_requested.append(serObj)
+            cust.save()
+        except Exception as e:
+            print(e)
+            print("unchecked")
     return Response("checked")
+
+
+@api_view(['GET', 'POST'])
+def categoryShow(request):
+    print("-------in function---------")
+    if request.method == 'POST':
+        print("-------in post----------")
+        # print(request.POST['Salon'])
+        # print(request.POST['Carpenter'])
+        # print(request.POST['Plumber'])
+        try:
+            if request.POST['Salon'] == 'Salon':
+                type_name = request.POST['Salon']
+                print(type_name)
+                obj = ServiceList.objects.filter(service_category=type_name)
+                print(obj)
+                context = {"obj": obj}
+                return render(request, "salon.html", context)
+        except Exception as e:
+            # print(e)
+            # return render(request , "category.html")
+            pass
+
+        try:
+            if request.POST['Carpenter'] == 'Carpenter':
+                type_name = request.POST['Carpenter']
+                print(type_name)
+                obj = ServiceList.objects.filter(service_category=type_name)
+                print(obj)
+                context = {"obj": obj}
+                return render(request, "carpenter.html", context)
+        except Exception as e:
+            # print(e)
+            # return render(request , "category.html")
+            pass
+
+        try:
+            if request.POST['Plumber'] == 'Plumber':
+                type_name = request.POST['Plumber']
+                print(type_name)
+                obj = ServiceList.objects.filter(service_category=type_name)
+                print(obj)
+                context = {"obj": obj}
+                return render(request, "plumber.html", context)
+        except Exception as e:
+            # print(e)
+            # return render(request , "category.html")
+            pass
+    return render(request, "category.html")
