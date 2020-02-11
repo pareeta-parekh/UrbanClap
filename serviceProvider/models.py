@@ -14,14 +14,13 @@ class Address(models.Model):
     zipcode = models.IntegerField()
 
 
-# class CustService(models.Model):
-#     service_name = models.CharField(max_length=255, blank=False, null=False)
-#     service_price = models.IntegerField(blank=False, null=False)
-#     status = models.CharField(max_length=30, blank=False, null=False)
-#     service_provider = models.CharField(max_length=30, blank=False, null=False)
-#     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-#     updated_at = models.DateTimeField(auto_now=True, editable=False)
-
+class CustService(models.Model):
+    service_name = models.CharField(max_length=255, blank=False, null=False)
+    service_price = models.IntegerField(blank=False, null=False)
+    status = models.CharField(max_length=30, blank=False, null=False)
+    service_provider = models.CharField(max_length=30, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
 
 class Customer(models.Model):
     token_id = models.CharField(max_length = 255 , null = True)
@@ -30,14 +29,18 @@ class Customer(models.Model):
     email = models.EmailField(blank=False, null=False, unique=True)
     phone = models.IntegerField(null=False, blank=False)
     address = EmbeddedModelField(model_container=Address)
+    services_requested = ArrayModelField(model_container=CustService)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
 class ServiceList(models.Model):
     sid = models.IntegerField(null=False, blank=False)
+    spid = models.IntegerField(null=False, blank=False)
+    service_category = models.CharField(max_length=120, null=False, blank=False)
     service_name = models.CharField(max_length=120, null=False, blank=False)
     service_desc = models.CharField(max_length=255, null=False, blank=False)
     service_cost = models.IntegerField(null=False, blank=False)
+    is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=True)
 

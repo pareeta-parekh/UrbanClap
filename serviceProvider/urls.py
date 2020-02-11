@@ -4,5 +4,7 @@ from .services import *
 
 urlpatterns = [
     path('spregister/', spregister),
-    path('addservice/', addservice)
+    path('addservice/<str:pk>/', addservice),
+    path('updateservice/<str:asid>/<str:spid>/', updateservice),
+    path('deletereq/<str:sid>/<str:spid>/', deleteservice)
 ]

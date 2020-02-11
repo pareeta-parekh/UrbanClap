@@ -23,7 +23,8 @@ class CustomerSerializer(serializers.ModelSerializer):
             password = validated_data['password'],
             email = validated_data['email'],
             phone = validated_data['phone'],
-            address = self.context
+            address = self.context,
+            services_requested = []
         )
         return client
 
