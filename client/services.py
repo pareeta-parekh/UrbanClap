@@ -58,15 +58,6 @@ def showServices(request):
 
 @api_view(['GET' , 'POST'])
 def categoryShow(request, token):
-
-    if request.method == 'GET':
-        try:
-            cust = Customer.objects.get(token_id = token)
-            return render(request, "category.html")
-        except ObjectDoesNotExist:
-            return Response({'message': 'Record not found...'})
-            
-
     print("-------in function---------")
     if request.method == 'GET':
         try:
@@ -79,9 +70,6 @@ def categoryShow(request, token):
             cust = Customer.objects.get(token_id = token)
             print(cust)
             print("-------in post----------")
-            # print(request.POST['Salon'])
-            # print(request.POST['Carpenter'])
-            # print(request.POST['Plumber'])
             try:
                 if request.POST['Salon'] == 'Salon':
                     type_name = request.POST['Salon']
@@ -92,12 +80,12 @@ def categoryShow(request, token):
                     for cusapp in cust.services_requested:
                         for objs in obj:
                             if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
-                                objduplicate.exclude(objs)
-                                print(objs.service_name)
+                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                print("in if",objduplicate)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
-                    print(objduplicate)
+                    print("objduplicate",objduplicate)
                     context = {"obj": objduplicate, 'token': token}
                     return render(request, "salon.html", context)
             except Exception as e:
@@ -114,15 +102,13 @@ def categoryShow(request, token):
                     for cusapp in cust.services_requested:
                         for objs in obj:
                             if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
-                                objduplicate.exclude(objs)
+                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print(objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
                     print(objduplicate)
                     context = {"obj": objduplicate, 'token': token}
-                    print(obj)
-                    context = {"obj": obj, 'token':token}
                     return render(request, "carpenter.html", context)
             except Exception as e:
                 # print(e)
@@ -138,27 +124,22 @@ def categoryShow(request, token):
                     for cusapp in cust.services_requested:
                         for objs in obj:
                             if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
-                                objduplicate.exclude(objs)
-                                print(objs.service_name)
+                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                print("in if",objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
-                    print(objduplicate)
+                    print("duplicate",objduplicate)
                     context = {"obj": objduplicate, 'token': token}
-                    print(obj)
-                    context = {"obj": obj,'token':token}
                     return render(request, "plumber.html", context)
             except Exception as e:
                 # print(e)
                 # return render(request , "category.html")
                 pass
-
-            # return render(request, "category.html")
         except ObjectDoesNotExist:
             print("Except")
             return Response({'context': 'Record not found...'})
     return render(request, "category.html")
-    
 
 @api_view(['GET'])
 def deleteService(request):
