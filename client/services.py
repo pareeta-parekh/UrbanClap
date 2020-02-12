@@ -58,6 +58,15 @@ def showServices(request):
 
 @api_view(['GET', 'POST'])
 def categoryShow(request, token):
+
+    if request.method == 'GET':
+        try:
+            cust = Customer.objects.get(token_id = token)
+            return render(request, "category.html")
+        except ObjectDoesNotExist:
+            return Response({'message': 'Record not found...'})
+            
+
     print("-------in function---------")
     if request.method == 'POST':
         try:
@@ -105,9 +114,13 @@ def categoryShow(request, token):
                 # print(e)
                 # return render(request , "category.html")
                 pass
+
+            # return render(request, "category.html")
         except ObjectDoesNotExist:
-            return render(request, "plumber.html", {'context': 'Record not found...'})
+            return Response({'Message': 'Record not found...'})
+    
     return render(request, "category.html")
+    
 
 
 def deleteService(request):

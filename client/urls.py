@@ -3,6 +3,7 @@ from django.urls import path , include
 from .users import *
 from .services import *
 from .views import *
+from .chat import *
 
 urlpatterns = [
     path('register/', register),
@@ -10,4 +11,5 @@ urlpatterns = [
     path('logout/<str:token>/', logout),
     path('showService/' , showServices),
     path('category/<str:token>/' , categoryShow ),
+    path('chat/<str:token>/<int:srpr_id>/<int:service_id>/', client_chat),
 ]

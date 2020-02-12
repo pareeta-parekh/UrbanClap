@@ -29,3 +29,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         return client
 
 
+class chatSerielizer(serializers.ModelSerializer):
+    class Meta:
+        model = Appsercomment
+        fields = "__all__"
