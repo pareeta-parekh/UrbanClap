@@ -27,6 +27,15 @@ def addservice(request, token):
 
             condata = []
             spobj = Serviceprovider.objects.get(token_id = token)
+            # if spobj.services != []:
+            #     for obj in spobj.services:
+            #         if obj.service_name != request.POST['service_name']:
+            #             if obj.service_category != request.POST['service_category']:
+            #                 print(obj.service_name)
+            #         else:
+            #             return Response("Already exists service name")
+            # return Response()
+
             condata.append(spobj)
             if spobj.services == []:
                 sid = 1
@@ -39,7 +48,7 @@ def addservice(request, token):
                 service.save()
                 print(service)
                 return Response(service.data)
-                # spobj.save()
+                spobj.save()
             return Response(service.errors)
 
         except ObjectDoesNotExist:
@@ -58,19 +67,23 @@ def updateservice(request, asid, token):
                         obj.status = request.POST['status']
                         spobj.save()
                         return Response("Status Updated")
-                    
                 return Response("Service is Accepted, Can't reject it or no such service present")
             else:
                 print(request.POST['status'])
                 for obj in spobj.applied_service:
+                    print("For", obj.asid)
                     if obj.asid == int(asid):
                         print("In if")
                         obj.status = request.POST['status']
                         #obj.save()
                         spobj.save()
                         return Response("Status Updated")
+
                     
                 return Response("No such service present")
+
+               
+
 
         except ObjectDoesNotExist:
             return Response({'message': 'You are not Logged In...'})
@@ -78,10 +91,9 @@ def updateservice(request, asid, token):
 @api_view(['DELETE'])
 def deleteservice(request, sid, token):
     if request.method == 'DELETE':
-        
+        # if request.method == "GET":
         try:
-            spobj = Serviceprovider.objects.get(token_id = token)
-            
+            spobj = Serviceprovider.objects.get(token_id = token)                    
             count = 0
             for obj in spobj.applied_service:
                 if obj.service_id == int(sid) and (obj.status == "Reject" or obj.status == "Pending"):
