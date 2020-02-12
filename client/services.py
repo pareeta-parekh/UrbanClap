@@ -42,6 +42,7 @@ def showServices(request):
                         service_name = obj.service_name,
                         service_price = obj.service_cost,
                         status = "Pending",
+                        service_id = obj.sid,
                         service_provider = obj.spid
                         )
                 cust = Customer.objects.get(id = id)
@@ -52,17 +53,20 @@ def showServices(request):
                 print("unchecked")
         except ObjectDoesNotExist:
             return render(request, "category.html",{'context':'You are not LoggedIn...'})
-        
-    # return Response("checked")
-
 
 @api_view(['GET', 'POST'])
 def categoryShow(request, token):
     print("-------in function---------")
+    if request.method == 'GET':
+        try:
+            cust = Customer.objects.get(token_id = token)
+            return render(request, "category.html")
+        except:
+            return Response("Plz Login..")
     if request.method == 'POST':
         try:
             cust = Customer.objects.get(token_id = token)
-
+            print(cust)
             print("-------in post----------")
             # print(request.POST['Salon'])
             # print(request.POST['Carpenter'])
@@ -71,9 +75,19 @@ def categoryShow(request, token):
                 if request.POST['Salon'] == 'Salon':
                     type_name = request.POST['Salon']
                     print(type_name)
+                    objlist = []
                     obj = ServiceList.objects.filter(service_category=type_name)
-                    print(obj)
-                    context = {"obj": obj, 'token':token}
+                    objduplicate = obj
+                    for cusapp in cust.services_requested:
+                        for objs in obj:
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                                objduplicate.exclude(objs)
+                                print(objs.service_name)
+                            else:
+                                print("else---------")
+                                print(objs.service_name)
+                    print(objduplicate)
+                    context = {"obj": objduplicate, 'token': token}
                     return render(request, "salon.html", context)
             except Exception as e:
                 # print(e)
@@ -85,6 +99,17 @@ def categoryShow(request, token):
                     type_name = request.POST['Carpenter']
                     print(type_name)
                     obj = ServiceList.objects.filter(service_category=type_name)
+                    objduplicate = obj
+                    for cusapp in cust.services_requested:
+                        for objs in obj:
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                                objduplicate.exclude(objs)
+                                print(objs.service_name)
+                            else:
+                                print("else---------")
+                                print(objs.service_name)
+                    print(objduplicate)
+                    context = {"obj": objduplicate, 'token': token}
                     print(obj)
                     context = {"obj": obj, 'token':token}
                     return render(request, "carpenter.html", context)
@@ -98,6 +123,17 @@ def categoryShow(request, token):
                     type_name = request.POST['Plumber']
                     print(type_name)
                     obj = ServiceList.objects.filter(service_category=type_name)
+                    objduplicate = obj
+                    for cusapp in cust.services_requested:
+                        for objs in obj:
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                                objduplicate.exclude(objs)
+                                print(objs.service_name)
+                            else:
+                                print("else---------")
+                                print(objs.service_name)
+                    print(objduplicate)
+                    context = {"obj": objduplicate, 'token': token}
                     print(obj)
                     context = {"obj": obj,'token':token}
                     return render(request, "plumber.html", context)
@@ -106,16 +142,45 @@ def categoryShow(request, token):
                 # return render(request , "category.html")
                 pass
         except ObjectDoesNotExist:
-            return render(request, "plumber.html", {'context': 'Record not found...'})
+            print("Except")
+            return Response({'context': 'Record not found...'})
     return render(request, "category.html")
 
 
+@api_view(['GET'])
 def deleteService(request):
-    name = ""
-    delObj = CustService.objects.get(service_name = name)
-    if delObj.status == "Pending":
-        delObj.is_deleted = True
-        return Response("Deleted!")
-    else:
-        return Response("Invalid Request")
+    if request.method == 'GET':
+        ids = request.GET['service_id']
+        cust_id = request.GET['customer_id']
+        print(cust_id)
+        print("-----------------------service id", ids)
+        delObj = CustService.objects.get(service_id=ids)
+        if delObj.status == "Pending":
+            delObj.is_deleted = True
+            delObj.save()
+        custObj = Customer.objects.get(id=cust_id)
+        print(custObj)
+        for i in custObj.services_requested:
+            print(i.status)
+            print("service id ", i.service_id)
+            print("upper service id ", ids)
+            if i.status == "Pending" and i.service_id == ids:
+                print("in if")
+                print(i.is_deleted)
+                i.is_deleted = True
+                print(i.is_deleted)
+                custObj.save()
+    return render(request, "showReqService.html")
+
+
+@api_view(['GET'])
+def req_service(request, token):
+    print("req service")
+    cust_id = Customer.objects.get(token_id=token)
+    print(cust_id)
+    if request.method == 'GET':
+        print("in method get")
+        print(cust_id.services_requested)
+        context = {"c_req": cust_id.services_requested}
+        return render(request, "showReqService.html", context)
 

@@ -3,24 +3,24 @@
 {% block salon %}
 {% for objects in obj %}
     {% if objects.is_deleted == False %}
-        <ul>
-            <li style="cursor: pointer;" id="li_{{objects.sid}}">{{objects.service_name}}</li>
-            <p id="cost_{{objects.sid}}">{{objects.service_cost}}</p>
-            <p id="desc_{{objects.sid}}">{{objects.service_desc}}</p>
-            <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
-        </ul>
-        <script>
-            $(document).ready(function(){
-                $("#cost_{{objects.sid}}").hide();
-                $("#desc_{{objects.sid}}").hide();
-                $("#{{objects.spid}}_{{objects.sid}}").hide();
-            $("#li_{{objects.sid}}").click(function(){
-                $("#cost_{{objects.sid}}").toggle();
-                $("#desc_{{objects.sid}}").toggle();
-                $("#{{objects.spid}}_{{objects.sid}}").toggle();
-            });
-            });
-        </script>
+    <ul>
+        <li style="cursor: pointer;" id="li_{{objects.sid}}">{{objects.service_name}}</li>
+        <p id="cost_{{objects.sid}}">{{objects.service_cost}}</p>
+        <p id="desc_{{objects.sid}}">{{objects.service_desc}}</p>
+        <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
+    </ul>
+    <script>
+        $(document).ready(function(){
+            $("#cost_{{objects.sid}}").hide();
+            $("#desc_{{objects.sid}}").hide();
+            $("#{{objects.spid}}_{{objects.sid}}").hide();
+        $("#li_{{objects.sid}}").click(function(){
+            $("#cost_{{objects.sid}}").toggle();
+            $("#desc_{{objects.sid}}").toggle();
+            $("#{{objects.spid}}_{{objects.sid}}").toggle();
+        });
+        });
+    </script>
     {% endif %}
 {% endfor%}
 
