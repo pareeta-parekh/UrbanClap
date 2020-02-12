@@ -7,5 +7,6 @@ from rest_framework.response import Response
 @api_view(['GET'])
 
 def comments(request):
-    pass
+    if request.method == 'GET':
+        pass
 
