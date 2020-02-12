@@ -52,10 +52,6 @@ def updateservice(request, asid, token):
     if request.method == "PUT":
         try:
             spobj = Serviceprovider.objects.get(token_id = token)
-            
-            
-
-            spobj = Serviceprovider.objects.get(token_id = token)
             if request.POST['status'] == "Reject":
                 for obj in spobj.applied_service:
                     if obj.asid == int(asid) and obj.status != "Accepted":
@@ -82,10 +78,7 @@ def deleteservice(request, sid, token):
     if request.method == 'DELETE':
         if request.method == "GET":
             try:
-                spobj = Serviceprovider.objects.get(token_id = token)
-                
-                    
-                spobj = Serviceprovider.objects.get(token_id = token)
+                spobj = Serviceprovider.objects.get(token_id = token)                    
                 count = 0
                 for obj in spobj.applied_service:
                     if obj.service_id == int(sid) and (obj.status == "Reject" or obj.status == "Pending"):
