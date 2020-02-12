@@ -40,3 +40,8 @@ class AddServiceSerializer(serializers.ModelSerializer):
         self.context[0].services.append(serviceobj)
         self.context[0].save()
         return serviceobj
+
+class chatSerielizer(serializers.ModelSerializer):
+    class Meta:
+        model = Appsercomment
+        fields = "__all__"

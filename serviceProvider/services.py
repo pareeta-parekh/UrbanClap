@@ -78,11 +78,15 @@ def updateservice(request, asid, token):
                         #obj.save()
                         spobj.save()
                         return Response("Status Updated")
-                return Response("No service present")
+
+                    
+                return Response("No such service present")
+
+               
+
 
         except ObjectDoesNotExist:
             return Response({'message': 'You are not Logged In...'})
-
 
 @api_view(['DELETE'])
 def deleteservice(request, sid, token):
