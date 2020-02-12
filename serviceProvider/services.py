@@ -27,6 +27,15 @@ def addservice(request, token):
 
             condata = []
             spobj = Serviceprovider.objects.get(token_id = token)
+            # if spobj.services != []:
+            #     for obj in spobj.services:
+            #         if obj.service_name != request.POST['service_name']:
+            #             if obj.service_category != request.POST['service_category']:
+            #                 print(obj.service_name)
+            #         else:
+            #             return Response("Already exists service name")
+            # return Response()
+
             condata.append(spobj)
             if spobj.services == []:
                 sid = 1
@@ -39,7 +48,7 @@ def addservice(request, token):
                 service.save()
                 print(service)
                 return Response(service.data)
-                # spobj.save()
+                spobj.save()
             return Response(service.errors)
 
         except ObjectDoesNotExist:
@@ -47,14 +56,10 @@ def addservice(request, token):
 
 
 
-@api_view(['GET', 'PUT'])
+@api_view(['PUT'])
 def updateservice(request, asid, token):
     if request.method == "PUT":
         try:
-            spobj = Serviceprovider.objects.get(token_id = token)
-            
-            
-
             spobj = Serviceprovider.objects.get(token_id = token)
             if request.POST['status'] == "Reject":
                 for obj in spobj.applied_service:
@@ -62,45 +67,44 @@ def updateservice(request, asid, token):
                         obj.status = request.POST['status']
                         spobj.save()
                         return Response("Status Updated")
-                    else:
-                        return Response("Service is Accepted. Can't reject it.")
+                return Response("Service is Accepted, Can't reject it or no such service present")
             else:
+                print(request.POST['status'])
                 for obj in spobj.applied_service:
+                    print("For", obj.asid)
                     if obj.asid == int(asid):
                         print("In if")
                         obj.status = request.POST['status']
                         #obj.save()
-                spobj.save()
-                return Response("Status Updated")
+                        spobj.save()
+                        return Response("Status Updated")
+                return Response("No service present")
 
         except ObjectDoesNotExist:
             return Response({'message': 'You are not Logged In...'})
 
 
-@api_view(['GET', 'DELETE'])
+@api_view(['DELETE'])
 def deleteservice(request, sid, token):
     if request.method == 'DELETE':
-        if request.method == "GET":
-            try:
-                spobj = Serviceprovider.objects.get(token_id = token)
-                
-                    
-                spobj = Serviceprovider.objects.get(token_id = token)
-                count = 0
-                for obj in spobj.applied_service:
-                    if obj.service_id == int(sid) and (obj.status == "Reject" or obj.status == "Pending"):
-                        count = count + 1
-                if count == 0:
-                    sobj = ServiceList.objects.get(sid = sid)
-                    for obj in spobj.services:
-                        if obj.sid == int(sid):
-                            obj.is_deleted = True
-                            spobj.save()
-                    sobj.is_deleted = True
-                    sobj.save()
-                    return Response("Deleted successfully")
-                else:
-                    return Response("Inavlid Function")
+        # if request.method == "GET":
+        try:
+            spobj = Serviceprovider.objects.get(token_id = token)                    
+            count = 0
+            for obj in spobj.applied_service:
+                if obj.service_id == int(sid) and (obj.status == "Reject" or obj.status == "Pending"):
+                    count = count + 1
+            if count == 0:
+                sobj = ServiceList.objects.get(sid = sid)
+                for obj in spobj.services:
+                    if obj.sid == int(sid):
+                        obj.is_deleted = True
+                        spobj.save()
+                sobj.is_deleted = True
+                sobj.save()
+                return Response("Deleted successfully")
+            else:
+                return Response("Inavlid Function")
 
-            except ObjectDoesNotExist:
-                return Response({'message': 'You are not Logged In...'})
+        except ObjectDoesNotExist:
+            return Response({'message': 'You are not Logged In...'})
