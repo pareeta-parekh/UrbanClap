@@ -37,6 +37,7 @@ function getId(ids)
             type:"get",
             url: "/client/showService/",
             data:{
+                    token: "{{token}}",
                     provider_id : num[0],
                     service_id : num[1]
                 }

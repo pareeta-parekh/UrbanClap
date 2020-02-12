@@ -15,10 +15,12 @@ class Address(models.Model):
 
 
 class CustService(models.Model):
+    cust_id = models.IntegerField(null=False, blank=False)
     service_name = models.CharField(max_length=255, blank=False, null=False)
     service_price = models.IntegerField(blank=False, null=False)
     status = models.CharField(max_length=30, blank=False, null=False)
     service_provider = models.CharField(max_length=30, blank=False, null=False)
+    is_deleted = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
