@@ -1,6 +1,7 @@
 from .models import *
 from .serializers import *
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -8,23 +9,43 @@ from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from random import sample
 
+from rest_framework import status
+
 @api_view(['GET', 'POST'])
 def spregister(request):
     if request.method == 'GET':
-        listdata = Serviceprovider.objects.all()
-        print(listdata.values())
-        serializer = SPSerializer(listdata, many=True)
-        return Response(serializer.data)
+        # listdata = Serviceprovider.objects.all()
+        # print(listdata.values())
+        # serializer = SPSerializer(listdata, many=True)
+        # return Response(serializer.data)
+
+        return render(request, 'serviceProvider/registration.html')
 
     if request.method == 'POST':
         serializer = SPSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
 
-@api_view(['POST'])
+        if serializer.is_valid():
+            title = 'Good Job!'
+            message = 'Registation Successfully...!'
+            icon = 'success'
+            serializer.save()
+            return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon} )
+
+        # title = 'Try again!'
+        # message = serializer.errors
+        # icon = 'warning'
+        # return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon})
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+            )        
+        
+
+@api_view(['GET','POST'])
 def sprlogin(request):
+    if request.method == 'GET':
+        return render(request, 'serviceProvider/login.html')
+
     if request.method == 'POST':
         email = request.data['email']
         password = request.data['password']
@@ -46,20 +67,45 @@ def sprlogin(request):
                 servicePR.token_id = token.key
                 servicePR.save()
 
-                return Response({'message': 'You are LoggedIn...'})
+                request.session['token'] = token.key
+                data = {
+                    'title':'Good Job!',
+                    'message':'You are LoggedIn...',
+                    'icon':'success',
+                    'url': '/serviceprovider/addservice/',
+                }
+                # return redirect('/serviceprovider/addservice/')
+                return render(request, 'serviceProvider/blank.html', data)
+                # return Response({'message': 'You are LoggedIn...'})
 
             else:
-                return Response({'message': 'You are already LoggedIn...'})
+
+                request.session['token'] = servicePR.token_id
+                data = {
+                    'title':'Good Job!',
+                    'message':'You are already LoggedIn...',
+                    'icon':'success',
+                    'url': '/serviceprovider/addservice/',
+                }
+                # return redirect('/serviceprovider/addservice/')
+                return render(request, 'serviceProvider/blank.html', data)
+                # return Response({'message': 'You are already LoggedIn...'})
 
         except ObjectDoesNotExist:
-            return Response({'message': 'Email not found...'})
+            title = 'Try again!'
+            message = 'Email not found...'
+            icon = 'error'
+            return render(request, 'serviceProvider/login.html',{'title':title,'message': message, 'icon': icon})
+            # return Response({'message': 'Email not found...'})
 
 @api_view(['GET'])
-def sprlogout(request, token):
-    try:
-        servicePR = Serviceprovider.objects.get(token_id = token)
-        servicePR.token_id = None
-        servicePR.save()
-        return Response({'message': 'Logged out...'})
-    except ObjectDoesNotExist:
-        return Response({'message': 'Record not found...'})
+def sprlogout(request):
+    del request.session['token']
+    return redirect('/serviceprovider/login/')
+    # try:
+    #     servicePR = Serviceprovider.objects.get(token_id = token)
+    #     servicePR.token_id = None
+    #     servicePR.save()
+    #     return Response({'message': 'Logged out...'})
+    # except ObjectDoesNotExist:
+    #     return Response({'message': 'Record not found...'})

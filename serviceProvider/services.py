@@ -1,6 +1,6 @@
 from .models import *
 from .serializers import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import *
@@ -9,15 +9,20 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET', 'POST'])
-def addservice(request, token):
+def addservice(request):
     if request.method == "GET":
         try:
-            spobj = Serviceprovider.objects.get(token_id = token)
-            
-            return Response("All data here")
+            tkn = request.session['token']
+            print(tkn)
+            try:
+                # spobj = Serviceprovider.objects.get(token_id = token)
+                return render(request, 'serviceProvider/services.html', {'tkn':tkn})
+                # return Response("All data here")
 
-        except ObjectDoesNotExist:
-            return Response({'message': 'You are not Logged In...'})
+            except ObjectDoesNotExist:
+                return Response({'message': 'You are not Logged In...'})
+        except KeyError:
+            return redirect('/serviceprovider/login/')
 
         
     

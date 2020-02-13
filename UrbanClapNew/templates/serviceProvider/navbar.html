@@ -1,0 +1,9 @@
+<div class="container">
+    {% if tkn %}
+        <a href="/serviceprovider/addservice/">Services</a> |
+        <a href="/serviceprovider/logout/">Logout</a>
+    {% else %}
+        <a href="/serviceprovider/login">Login</a> |
+        <a href="/serviceprovider/register">Registration</a>
+    {% endif %}
+</div>
