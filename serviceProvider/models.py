@@ -19,6 +19,7 @@ class CustService(models.Model):
     service_name = models.CharField(max_length=255, blank=False, null=False)
     service_price = models.IntegerField(blank=False, null=False)
     status = models.CharField(max_length=30, blank=False, null=False)
+    service_id = models.CharField(max_length=30, blank=False, null=False)
     service_provider = models.CharField(max_length=30, blank=False, null=False)
     is_deleted = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
