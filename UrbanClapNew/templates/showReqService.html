@@ -36,7 +36,16 @@
 
                 {% if objects.status == "Completed" %}
                 Enter Your Comments: <input type="text" name="{{objects.service_name}}" id="{{objects.service_name}}">
-                <button type="button" id="{{objects.service_name}}_{{objects.service_id}}" onclick="commentService(this.id)">Comment</button>
+                <br><br>
+                Enter Your Ratings : <select id="rating_{{objects.service_name}}">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+                <br><br>
+                <button type="button" id="{{objects.service_name}}_{{objects.service_id}}_{{objects.service_provider}}" onclick="commentService(this.id)">Comment</button>
                     <script>
                         console.log("complete if")
                         $(document).ready(function(){
@@ -76,6 +85,9 @@
                 console.log(commnt[0]);
                 comDesc = document.getElementById(commnt[0]).value;
                 console.log(comDesc);
+                rate =document.getElementById("rating_" + commnt[0]).value;
+                console.log(rate)
+                
                 
                 $.ajax({
                             type:"get",
@@ -84,7 +96,9 @@
                                     customer_id : "{{objects.cust_id}}",
                                     service_id : commnt[1],
                                     service_name : commnt[0],
-                                    desc : comDesc
+                                    service_provider : commnt[2],
+                                    desc : comDesc,
+                                    rate : rate
                                 }
                         })
             }

@@ -2,47 +2,28 @@
     <h3> salon here</h3>
 {% block salon %}
 {% for objects in obj %}
-    {% if objects.is_deleted == False %}
+        {% if objects.is_deleted == False %}
     <ul>
+        <br>
         <li style="cursor: pointer;" id="li_{{objects.sid}}_{{objects.spid}}">{{objects.service_name}}</li>
-        <p id="cost_{{objects.sid}}_{{objects.spid}}">{{objects.service_cost}}</p>
-        <p id="desc_{{objects.sid}}_{{objects.spid}}">{{objects.service_desc}}</p>
+        <p id="cost_{{objects.sid}}_{{objects.spid}}">Cost : {{objects.service_cost}}</p>
+        <p id="desc_{{objects.sid}}_{{objects.spid}}">Description: {{objects.service_desc}}</p>
         {% for objDesc in desc %}
             {% if objects.sid == objDesc.sid %}
             {% if objects.spid == objDesc.spid %}
-                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}">Comments: {{objDesc.comment_desc}}</p>
+                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}">Comments: {{objDesc.comment_desc}}</p>
                 <script>
                     $(document).ready(function(){
-                        $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").hide();
+                        $("#comment_{{objDesc.sid}}_{{objDesc.spid}}").hide();
                         $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
-                            $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").toggle();
+                            $("#comment_{{objDesc.sid}}_{{objDesc.spid}}").toggle();
                         });
                     });
 
                 </script>
             {% endif %}
             {% endif %}
-        {% endfor %}
-        <p id="rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}">Rating :  </p>
-                
-        {% for key, values in ratings.items %}
-            <script>
-                console.log("{{key}}");
-                var keys = "{{key}}";
-                keyCondition = keys.split("_");
-                console.log("{{values}}");
-                if( "{{objects.sid}}" == keyCondition[0] && "{{objects.spid}}" == keyCondition[1])
-                {
-                    document.getElementById("rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").innerHTML = `Rating : {{values}}`;
-                    $(document).ready(function(){
-                        $("#rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").hide();
-                        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
-                    $("#rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").toggle();
-                });
-            });
-                }  
-            </script>
-        {% endfor %}
+       
         <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
     </ul>
     <script>
@@ -57,7 +38,8 @@
         });
         });
     </script>
-    {% endif %}
+     {% endfor %}
+        {% endif %}
 {% endfor%}
 
 <script>
@@ -85,3 +67,4 @@ function getId(ids)
 
 
 {% endblock %}
+
