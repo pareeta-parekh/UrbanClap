@@ -7,7 +7,8 @@
 <div>
     <h3> Services Requested: </h3>
         {% for objects in c_req %}
-        <form id="frm_{{objects.service_id}}" method="POST" action=".">{% csrf_token %}
+        <div id="div_{{objects.service_id}}_{{objects.service_provider}}">
+        <form id="frm_{{objects.service_id}}_{{objects.service_provider}}" method="POST" action=".">{% csrf_token %}
             {% if objects.is_deleted == False %}
                 <li> {{objects.service_name}} </li>
                 <li> {{objects.service_price}} </li>
@@ -28,7 +29,7 @@
                     });
                 </script>
                 {% endif %}
-                <button type="button" id="{{objects.service_id}}" onclick="deleteService(this.id)">DELETE</button>
+                <button type="button" id="{{objects.service_id}}_{{objects.cust_id}}_{{objects.service_provider}}" onclick="deleteService(this.id)">DELETE</button>
                 <br>
         </form>
 
@@ -64,18 +65,23 @@
                 {% endif %}
             {% endif %}
         </form>
+        </div>
         <script>
             function deleteService(ids)
             {
+                var sids = ids.split("_")
+                console.log(sids);
+                
                 $.ajax({
                             type:"get",
                             url: "/client/del_Service/",
                             data:{
-                                    customer_id : "{{objects.cust_id}}",
-                                    service_id : ids,
+                                    service_id : sids[0],
+                                    customer_id : sids[1],
+                                    service_provider : sids[2],
                                 }
                         })
-                document.getElementById("frm_"+ids).remove()
+                document.getElementById("div_"+sids[0]+"_"+sids[2]).remove()
             }
 
             function commentService(cid)

@@ -95,7 +95,7 @@ def categoryShow(request, token):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objduplicate)
                             else:
@@ -107,14 +107,14 @@ def categoryShow(request, token):
                     context = {"obj": objduplicate , 'token': token , "desc" : comments, "ratings" : ratdictionary}
                     return render(request, "salon.html", context)
             except Exception as e:
-                print(e)
+                # print(e)
                 # return render(request , "category.html")
                 pass
 
             try:
                 if request.POST['Carpenter'] == 'Carpenter':
                     type_name = request.POST['Carpenter']
-                    print(type_name)
+                    print("type_name",type_name)
                     desc = CustComments.objects.all()
                     obj = ServiceList.objects.filter(service_category=type_name)
                     ratdictionary = {}
@@ -134,16 +134,17 @@ def categoryShow(request, token):
                         sum = 0
                     print(ratdictionary)
                     objduplicate = obj
+                    print("objduplicate",objduplicate)
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("status", cusapp.status)
                                 print(objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
-                    print(objduplicate)
+                    print("objduplicate",objduplicate)
                     context = {"obj": objduplicate, 'token': token , "desc" : comments , "ratings" : ratdictionary}
                     return render(request, "carpenter.html", context)
             except Exception as e:
@@ -176,7 +177,7 @@ def categoryShow(request, token):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objs.service_name)
                             else:
@@ -197,15 +198,25 @@ def categoryShow(request, token):
 @api_view(['GET'])
 def deleteService(request):
     if request.method == 'GET':
+        print("sid-----------------", request.GET['service_id'])
+        print("cid-----------------", request.GET['customer_id'])
+        print("spid----------------", request.GET['service_provider'])
         ids = request.GET['service_id']
         cust_id = request.GET['customer_id']
         print(cust_id)
         print("-----------------------service id", ids)
-        delObj = CustService.objects.get(service_id=ids)
-        if delObj.status == "Pending":
-            delObj.is_deleted = True
-            delObj.save()
-        custObj = Customer.objects.get(id=cust_id)
+        delObj = CustService.objects.filter(service_id=request.GET['service_id'],
+                                        cust_id = request.GET['customer_id'],
+                                        service_provider = request.GET['service_provider'])
+        print("delObj--------------",delObj)
+        for obj in delObj:
+            if obj.status == "Pending" and obj.is_deleted != True:
+                obj.is_deleted = True
+                obj.save()
+        # if delObj.status == "Pending":
+        #     delObj.is_deleted = True
+        #     delObj.save()
+        custObj = Customer.objects.get(id=request.GET['customer_id'])
         print(custObj)
         for i in custObj.services_requested:
             print(i.status)
@@ -227,8 +238,13 @@ def req_service(request, token):
     print(cust_id)
     if request.method == 'GET':
         print("in method get")
+        cust = []
+        for obj in cust_id.services_requested:
+            if obj.is_deleted == False:
+                cust.append(obj)
+            print(obj.is_deleted)
         print(cust_id.services_requested)
-        context = {"c_req": cust_id.services_requested}
+        context = {"c_req": cust}
         return render(request, "showReqService.html", context)
 
     # if request.method == 'POST':
