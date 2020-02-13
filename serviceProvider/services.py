@@ -9,9 +9,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET', 'POST'])
-def addservice(request, token):
+def addservice(request):
     if request.method == "GET":
         try:
+            token = request.headers['token']
             spobj = Serviceprovider.objects.get(token_id = token)
             
             return Response("All data here")
@@ -23,6 +24,7 @@ def addservice(request, token):
     
     if request.method == "POST":
         try:    
+            token = request.headers['token']
             condata = []
             spobj = Serviceprovider.objects.get(token_id = token)
             if spobj.services != []:
@@ -51,9 +53,10 @@ def addservice(request, token):
 
 
 @api_view(['PUT'])
-def updateservice(request, asid, token):
+def updateservice(request, asid):
     if request.method == "PUT":
         try:
+            token = request.headers['token']
             spobj = Serviceprovider.objects.get(token_id = token)
             if request.POST['status'] == "Reject":
                 for obj in spobj.applied_service:
@@ -88,21 +91,16 @@ def updateservice(request, asid, token):
                         obj.status = request.POST['status']
                         spobj.save()
                         return Response("Status Updated")
-
-                    
                 return Response("No such service present")
-
-               
-
-
         except ObjectDoesNotExist:
             return Response({'message': 'You are not Logged In...'})
 
 @api_view(['DELETE'])
-def deleteservice(request, sid, token):
+def deleteservice(request, sid):
     if request.method == 'DELETE':
         # if request.method == "GET":
         try:
+            token = request.headers['token']
             spobj = Serviceprovider.objects.get(token_id = token)                    
             count = 0
             for obj in spobj.applied_service:

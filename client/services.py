@@ -82,7 +82,7 @@ def categoryShow(request, token):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objduplicate)
                             else:
@@ -104,8 +104,9 @@ def categoryShow(request, token):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                print("status", cusapp.status)
                                 print(objs.service_name)
                             else:
                                 print("else---------")
@@ -126,7 +127,7 @@ def categoryShow(request, token):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid):
+                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed":
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objs.service_name)
                             else:

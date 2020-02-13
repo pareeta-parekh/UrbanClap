@@ -9,10 +9,11 @@ from .serializers import *
 from serviceProvider.models import *
 
 @api_view(['GET', 'POST'])
-def srpr_chat(request, token, cust_id, service_id):
+def srpr_chat(request, cust_id, service_id):
         
     if request.method == 'GET':
         try:
+            token = request.headers['token']
             srprObj = Serviceprovider.objects.get(token_id = token)
             
             # messages = Appsercomment.objects.filter(user_id = srprObj.id)
@@ -48,7 +49,8 @@ def srpr_chat(request, token, cust_id, service_id):
             return Response({'message': 'Record not found...'})
 
     elif request.method == 'POST':
-        try:           
+        try:  
+            token = request.headers['token']         
             srprObj = Serviceprovider.objects.get(token_id = token)
 
             clientObj = Customer.objects.get(id = cust_id)

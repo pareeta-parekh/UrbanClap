@@ -55,8 +55,9 @@ def sprlogin(request):
             return Response({'message': 'Email not found...'})
 
 @api_view(['GET'])
-def sprlogout(request, token):
+def sprlogout(request):
     try:
+        token = request.headers['token']
         servicePR = Serviceprovider.objects.get(token_id = token)
         servicePR.token_id = None
         servicePR.save()
@@ -65,13 +66,14 @@ def sprlogout(request, token):
         return Response({'message': 'Record not found...'})
 
 @api_view(['PUT'])
-def updatepass(request, token):
+def updatepass(request):
     if request.method == 'PUT':
         try:
-            spobj = Serviceprovider.objects.get(token_id = token)
+            spobj = Serviceprovider.objects.get(token_id = request.headers['token'])
+            print(request.headers['token'])
             if spobj.password == request.POST['old_password']:
                 spobj.password = request.POST['new_password']
                 spobj.save()
-                return Response("Passwword Updated")
+            return Response("Passwword Updated")
         except:
             return Response({'message': 'Record not found'})
