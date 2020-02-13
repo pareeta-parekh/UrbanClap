@@ -46,7 +46,6 @@ def showServices(request):
                     status="Pending",
                     service_provider=obj.spid,
                     service_id=obj.sid,
-                    comments = []
                 )
                 cust = Customer.objects.get(id=id)
                 cust.services_requested.append(serObj)
@@ -63,7 +62,8 @@ def categoryShow(request, token):
     if request.method == 'GET':
         try:
             cust = Customer.objects.get(token_id = token)
-            return render(request, "category.html")
+            context = {"token" : token}
+            return render(request, "category.html" , context)
         except:
             return Response("Plz Login..")
     if request.method == 'POST':
@@ -75,8 +75,23 @@ def categoryShow(request, token):
                 if request.POST['Salon'] == 'Salon':
                     type_name = request.POST['Salon']
                     print(type_name)
-                    objlist = []
                     obj = ServiceList.objects.filter(service_category=type_name)
+                    ratdictionary = {}
+                    sum = 0
+                    comments = CustComments.objects.all()
+                    for sl in obj:
+                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        print("desc",desc)
+                        for des in desc:
+                            sum = (sum + int(des.rating))
+                        print("----" , desc.count())
+                        if int(desc.count()) == 0:
+                            desclen = 1
+                        else:
+                            desclen = int(desc.count())
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        sum = 0
+                    print(ratdictionary)
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
@@ -86,11 +101,13 @@ def categoryShow(request, token):
                             else:
                                 print("else---------")
                                 print(objs.service_name)
+                                
+                                # context = {"desc" : desc }
                     print("objduplicate",objduplicate)
-                    context = {"obj": objduplicate, 'token': token}
+                    context = {"obj": objduplicate , 'token': token , "desc" : comments, "ratings" : ratdictionary}
                     return render(request, "salon.html", context)
             except Exception as e:
-                # print(e)
+                print(e)
                 # return render(request , "category.html")
                 pass
 
@@ -98,7 +115,24 @@ def categoryShow(request, token):
                 if request.POST['Carpenter'] == 'Carpenter':
                     type_name = request.POST['Carpenter']
                     print(type_name)
+                    desc = CustComments.objects.all()
                     obj = ServiceList.objects.filter(service_category=type_name)
+                    ratdictionary = {}
+                    sum = 0
+                    comments = CustComments.objects.all()
+                    for sl in obj:
+                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        print("desc",desc)
+                        for des in desc:
+                            sum = (sum + int(des.rating))
+                        print("----" , desc.count())
+                        if int(desc.count()) == 0:
+                            desclen = 1
+                        else:
+                            desclen = int(desc.count())
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        sum = 0
+                    print(ratdictionary)
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
@@ -109,7 +143,7 @@ def categoryShow(request, token):
                                 print("else---------")
                                 print(objs.service_name)
                     print(objduplicate)
-                    context = {"obj": objduplicate, 'token': token}
+                    context = {"obj": objduplicate, 'token': token , "desc" : comments , "ratings" : ratdictionary}
                     return render(request, "carpenter.html", context)
             except Exception as e:
                 # print(e)
@@ -120,7 +154,24 @@ def categoryShow(request, token):
                 if request.POST['Plumber'] == 'Plumber':
                     type_name = request.POST['Plumber']
                     print(type_name)
+                    desc = CustComments.objects.all()
                     obj = ServiceList.objects.filter(service_category=type_name)
+                    ratdictionary = {}
+                    sum = 0
+                    comments = CustComments.objects.all()
+                    for sl in obj:
+                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        print("desc",desc)
+                        for des in desc:
+                            sum = (sum + int(des.rating))
+                        print("----" , desc.count())
+                        if int(desc.count()) == 0:
+                            desclen = 1
+                        else:
+                            desclen = int(desc.count())
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        sum = 0
+                    print(ratdictionary)
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
@@ -131,7 +182,7 @@ def categoryShow(request, token):
                                 print("else---------")
                                 print(objs.service_name)
                     print("duplicate",objduplicate)
-                    context = {"obj": objduplicate, 'token': token}
+                    context = {"obj": objduplicate, 'token': token , "desc" : comments ,"ratings" : ratdictionary}
                     return render(request, "plumber.html", context)
             except Exception as e:
                 # print(e)

@@ -12,14 +12,21 @@ def comments(request):
         cid = request.GET['customer_id']
         sid = request.GET['service_id']
         sname = request.GET['service_name']
+        spid = request.GET['service_provider']
         desc = request.GET['desc']
+        rating = request.GET['rate']
 
-        custService = CustService.objects.filter(cust_id = int(cid) , service_id = sid)
+        cdesc = CustComments.objects.create(
+            sid = sid,
+            spid = spid,
+            cid = cid,
+            comment_desc = desc,
+            rating = rating
+        )
+        custService = ServiceList.objects.get(sid = sid , spid = spid)
         print("custService " , custService)
-        for ser in custService:
-            print("comments" , ser.comments)
-            ser.comments = desc
-            print("comments" , ser.comments)
-            ser.save()
+        print()
+        custService.comments.append(cdesc)
+        custService.save()
         return Response("commented")
 
