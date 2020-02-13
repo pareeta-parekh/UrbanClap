@@ -45,3 +45,9 @@ class chatSerielizer(serializers.ModelSerializer):
     class Meta:
         model = Appsercomment
         fields = "__all__"
+
+class APPSRSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appliedservice
+        fields = '__all__'
+        

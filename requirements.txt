@@ -3,3 +3,5 @@ django==2.2
 djangorestframework==3.9.2
 django-phone-field
 djongo==1.2.38
+
+django-filter
