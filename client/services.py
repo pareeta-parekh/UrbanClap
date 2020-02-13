@@ -45,7 +45,8 @@ def showServices(request):
                     service_price=obj.service_cost,
                     status="Pending",
                     service_provider=obj.spid,
-                    service_id=obj.sid
+                    service_id=obj.sid,
+                    comments = []
                 )
                 cust = Customer.objects.get(id=id)
                 cust.services_requested.append(serObj)
@@ -177,9 +178,4 @@ def req_service(request, token):
         print(cust_id.services_requested)
         context = {"c_req": cust_id.services_requested}
         return render(request, "showReqService.html", context)
-
-    # if request.method == 'POST':
-    #     print("in method POST")
-    #     print(cust_id.services_requested)
-    #     context = {"c_req" : cust_id.services_requested}
-    #     return render(request , "showReqService.html" , context)
+    

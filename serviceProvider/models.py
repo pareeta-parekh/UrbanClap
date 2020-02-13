@@ -4,6 +4,12 @@ from django.db import models
 from django.db import models
 from djongo.models import EmbeddedModelField, ArrayModelField
 
+class CustComments(models.Model):
+    sid = models.IntegerField(blank=False, null=False)
+    spid = models.IntegerField(blank=False, null=False)
+    cid = models.IntegerField(blank=False, null=False)
+    comment_desc = models.CharField(max_length=255, blank=False, null=False)
+
 
 class Address(models.Model):
     addline_1 = models.CharField(max_length=255, blank=False, null=False)
@@ -21,6 +27,7 @@ class CustService(models.Model):
     status = models.CharField(max_length=30, blank=False, null=False)
     service_id = models.CharField(max_length=30, blank=False, null=False)
     service_provider = models.CharField(max_length=30, blank=False, null=False)
+    comments = ArrayModelField(model_container=CustComments)
     is_deleted = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)

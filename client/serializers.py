@@ -33,3 +33,10 @@ class chatSerielizer(serializers.ModelSerializer):
     class Meta:
         model = Appsercomment
         fields = "__all__"
+
+
+# class CommentSerializer(serializers.ModelSerializer):
+#     comments = []
+#     class Meta:
+#         model = CustService
+#         fields = "__all__"
