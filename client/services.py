@@ -16,44 +16,46 @@ def showServices(request):
             cust = Customer.objects.get(token_id=token)
             id = cust.id
             print("-------- in show service get-----------")
-            try:
-                sid = request.GET['service_id']
-                pk = request.GET['provider_id']
-                print("sid", sid)
-                ser = Serviceprovider.objects.get(id=pk)
-                if ser.applied_service == []:
-                    asid = 1
-                else:
-                    asid = ser.applied_service[len(
-                        ser.applied_service) - 1].asid + 1
+            # try:
+            sid = request.GET['service_id']
+            pk = request.GET['provider_id']
+            print("sid", sid)
+            ser = Serviceprovider.objects.get(id=pk)
+            if ser.applied_service == []:
+                asid = 1
+            else:
+                asid = ser.applied_service[len(
+                    ser.applied_service) - 1].asid + 1
 
-                aplser = Appliedservice.objects.create(
-                    asid=asid,
-                    customer_id=int(id),
-                    service_id=int(sid),
-                    comments=[],
-                    status="Pending"
-                )
-                print("aplser ", aplser)
-                ser.applied_service.append(aplser)
-                ser.save()
-                obj = ServiceList.objects.get(sid=sid, spid=pk)
-                print("--------------obj---------", obj)
-                serObj = CustService.objects.create(
-                    cust_id=int(id),
-                    service_name=obj.service_name,
-                    service_price=obj.service_cost,
-                    status="Pending",
-                    service_provider=obj.spid,
-                    service_id=obj.sid,
-                    comments = []
-                )
-                cust = Customer.objects.get(id=id)
-                cust.services_requested.append(serObj)
-                cust.save()
-            except Exception as e:
-                print(e)
-                print("unchecked")
+            aplser = Appliedservice.objects.create(
+                asid=asid,
+                spid=pk,
+                customer_id=int(id),
+                service_id=int(sid),
+                comments=[],
+                status="Pending"
+            )
+            print("aplser ", aplser)
+            ser.applied_service.append(aplser)
+            ser.save()
+            obj = ServiceList.objects.get(sid=sid, spid=pk)
+            print("--------------obj---------", obj)
+            serObj = CustService.objects.create(
+                cust_id=int(id),
+                service_name=obj.service_name,
+                service_price=obj.service_cost,
+                status="Pending",
+                service_provider=obj.spid,
+                service_id=obj.sid,
+                comments = []
+            )
+            print("Serobj====================",serObj)
+            cust = Customer.objects.get(id=id)
+            cust.services_requested.append(serObj)
+            cust.save()
+            # except Exception as e:
+            #     print(e)
+            #     print("unchecked")
         except ObjectDoesNotExist:
             return render(request, "category.html", {'context': 'You are not LoggedIn...'})
 
@@ -63,7 +65,7 @@ def categoryShow(request, token):
     if request.method == 'GET':
         try:
             cust = Customer.objects.get(token_id = token)
-            return render(request, "category.html")
+            return render(request, "category.html", {'token':token})
         except:
             return Response("Plz Login..")
     if request.method == 'POST':
@@ -140,7 +142,7 @@ def categoryShow(request, token):
         except ObjectDoesNotExist:
             print("Except")
             return Response({'context': 'Record not found...'})
-    return render(request, "category.html")
+    return render(request, "category.html", {'token':token})
 
 @api_view(['GET'])
 def deleteService(request):
@@ -178,4 +180,9 @@ def req_service(request, token):
         print(cust_id.services_requested)
         context = {"c_req": cust_id.services_requested}
         return render(request, "showReqService.html", context)
-    
+
+    # if request.method == 'POST':
+    #     print("in method POST")
+    #     print(cust_id.services_requested)
+    #     context = {"c_req" : cust_id.services_requested}
+    #     return render(request , "showReqService.html" , context)

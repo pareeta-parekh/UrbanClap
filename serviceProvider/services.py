@@ -22,19 +22,13 @@ def addservice(request, token):
         
     
     if request.method == "POST":
-        try:
-            spobj = Serviceprovider.objects.get(token_id = token)
-
+        try:    
             condata = []
             spobj = Serviceprovider.objects.get(token_id = token)
-            # if spobj.services != []:
-            #     for obj in spobj.services:
-            #         if obj.service_name != request.POST['service_name']:
-            #             if obj.service_category != request.POST['service_category']:
-            #                 print(obj.service_name)
-            #         else:
-            #             return Response("Already exists service name")
-            # return Response()
+            if spobj.services != []:
+                for obj in spobj.services:
+                    if obj.service_name == request.POST['service_name'] and obj.service_category == request.POST['service_category']:
+                        return Response("Service Already Exists")
 
             condata.append(spobj)
             if spobj.services == []:
@@ -64,6 +58,15 @@ def updateservice(request, asid, token):
             if request.POST['status'] == "Reject":
                 for obj in spobj.applied_service:
                     if obj.asid == int(asid) and obj.status != "Accepted":
+                        cusobj = Customer.objects.get(id = obj.customer_id)
+                        for services in cusobj.services_requested:
+                            if int(services.service_id) == int(obj.service_id) and int(services.service_provider) == int(spobj.id):
+                                apobj = Appliedservice.objects.get(spid = spobj.id, asid = int(asid))
+                                apobj.status = request.POST['status']
+                                apobj.save()
+                                services.status = request.POST['status']
+                                cusobj.save()
+                                print("here",services.service_name)
                         obj.status = request.POST['status']
                         spobj.save()
                         return Response("Status Updated")
@@ -73,9 +76,16 @@ def updateservice(request, asid, token):
                 for obj in spobj.applied_service:
                     print("For", obj.asid)
                     if obj.asid == int(asid):
-                        print("In if")
+                        cusobj = Customer.objects.get(id = obj.customer_id)
+                        for services in cusobj.services_requested:
+                            if int(services.service_id) == int(obj.service_id) and int(services.service_provider) == int(spobj.id):
+                                apobj = Appliedservice.objects.get(spid = spobj.id, asid = int(asid))
+                                apobj.status = request.POST['status']
+                                apobj.save()
+                                services.status = request.POST['status']
+                                cusobj.save()
+                                print("here",services.service_name)
                         obj.status = request.POST['status']
-                        #obj.save()
                         spobj.save()
                         return Response("Status Updated")
 

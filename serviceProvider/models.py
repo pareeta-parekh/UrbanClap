@@ -61,6 +61,7 @@ class Appsercomment(models.Model):
 
 class Appliedservice(models.Model):
     asid = models.IntegerField(null=False, blank=False)
+    spid = models.IntegerField(null=False, blank=False)
     customer_id = models.IntegerField(null=False, blank=False)
     service_id =  models.IntegerField(null=False, blank=False)
     comments = ArrayModelField(model_container=Appsercomment)
