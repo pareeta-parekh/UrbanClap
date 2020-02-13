@@ -63,3 +63,15 @@ def sprlogout(request, token):
         return Response({'message': 'Logged out...'})
     except ObjectDoesNotExist:
         return Response({'message': 'Record not found...'})
+
+@api_view(['PUT'])
+def updatepass(request, token):
+    if request.method == 'PUT':
+        try:
+            spobj = Serviceprovider.objects.get(token_id = token)
+            if spobj.password == request.POST['old_password']:
+                spobj.password = request.POST['new_password']
+                spobj.save()
+                return Response("Passwword Updated")
+        except:
+            return Response({'message': 'Record not found'})

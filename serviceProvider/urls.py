@@ -11,4 +11,5 @@ urlpatterns = [
     path('updateservice/<str:asid>/<str:token>/', updateservice),
     path('deletereq/<str:sid>/<str:token>/', deleteservice),
     path('chat/<str:token>/<int:cust_id>/<int:service_id>/', srpr_chat),
+    path('updatepassword/<str:token>/', updatepass),
 ]

@@ -82,3 +82,16 @@ def logout(request, token):
         return Response({'message': 'Logged out...'})
     except ObjectDoesNotExist:
         return Response({'message': 'Record not found...'})
+
+
+@api_view(['PUT'])
+def updatepass(request, token):
+    if request.method == 'PUT':
+        try:
+            cobj = Customer.objects.get(token_id = token)
+            if cobj.password == request.POST['old_password']:
+                cobj.password = request.POST['new_password']
+                cobj.save()
+                return Response("Passwword Updated")
+        except:
+            return Response({'message': 'Record not found'})
