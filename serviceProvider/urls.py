@@ -7,9 +7,9 @@ urlpatterns = [
     path('register/', spregister),
     path('login/', sprlogin),
     path('logout/', sprlogout),
-    path('addservice/', addservice, name='addservice'),
-    path('updateservice/<str:asid>/<str:token>/', updateservice),
-    path('deletereq/<str:sid>/<str:token>/', deleteservice),
-    path('chat/<str:token>/<int:cust_id>/<int:service_id>/', srpr_chat),
-
+    path('addservice/', addservice),
+    path('updateservice/<str:asid>/', updateservice),
+    path('deletereq/<str:sid>/', deleteservice),
+    path('chat/<int:cust_id>/<int:service_id>/', srpr_chat),
+    path('updatepassword/', updatepass),
 ]

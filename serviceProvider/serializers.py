@@ -35,7 +35,8 @@ class AddServiceSerializer(serializers.ModelSerializer):
             service_category = validated_data['service_category'],
             service_name = validated_data['service_name'],
             service_desc = validated_data['service_desc'],
-            service_cost = validated_data['service_cost']
+            service_cost = validated_data['service_cost'],
+            comments = []
         )
         self.context[0].services.append(serviceobj)
         self.context[0].save()
