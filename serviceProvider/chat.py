@@ -21,14 +21,14 @@ def srpr_chat(request, cust_id, service_id):
 
             for apsr in srprObj.applied_service:
 
-                if apsr.comments == []:
+                if apsr.chat == []:
                     return Response({'message': 'No chat found..'})
 
                 if apsr.customer_id == clientObj.id and service_id == apsr.service_id:
 
                     data = []
 
-                    for chats in apsr.comments:
+                    for chats in apsr.chat:
 
                         data.append({
                             'user_type': chats.user_type,
@@ -66,14 +66,14 @@ def srpr_chat(request, cust_id, service_id):
 
                     if apsr.customer_id == clientObj.id and service_id == apsr.service_id:
 
-                        apsr.comments.append(appserCommentObj)
+                        apsr.chat.append(appserCommentObj)
 
                         appserCommentObj.save()
                         srprObj.save()
 
                         data = []
 
-                        for chats in apsr.comments:
+                        for chats in apsr.chat:
 
                             data.append({
                                 'user_type': chats.user_type,

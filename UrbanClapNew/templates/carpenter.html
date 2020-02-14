@@ -10,7 +10,16 @@
     {% for objDesc in desc %}
             {% if objects.sid == objDesc.sid %}
                 {% if objects.spid == objDesc.spid %}
-                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}">Comments: {{objDesc.comment_desc}}</p>
+                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}">Comments: {{objDesc.comment_desc}}</p>
+                <script>
+                    $(document).ready(function(){
+                        $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").hide();
+                        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+                            $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").toggle();
+                        });
+                    });
+
+                </script>
                 {% endif %}
             {% endif %}
         {% endfor %}

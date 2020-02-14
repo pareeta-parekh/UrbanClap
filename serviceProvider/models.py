@@ -69,7 +69,7 @@ class Appliedservice(models.Model):
     spid = models.IntegerField(null=False, blank=False)
     customer_id = models.IntegerField(null=False, blank=False)
     service_id = models.IntegerField(null=False, blank=False)
-    comments = ArrayModelField(model_container=Appsercomment)
+    chat = ArrayModelField(model_container=Appsercomment)
     status = models.CharField(max_length=25)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=True)

@@ -18,14 +18,14 @@
                 <script>
                     console.log("in if")
                     $(document).ready(function(){
-                        $("#{{objects.service_id}}").show();
+                        $("#{{objects.service_id}}_{{objects.cust_id}}_{{objects.service_provider}}").show();
                     });
                 </script>
                 {% else %}
                 <script>
                     console.log("else")
                     $(document).ready(function(){
-                        $("#{{objects.service_id}}").hide();
+                        $("#{{objects.service_id}}_{{objects.cust_id}}_{{objects.service_provider}}").hide();
                     });
                 </script>
                 {% endif %}

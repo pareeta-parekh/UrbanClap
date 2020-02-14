@@ -32,7 +32,7 @@ def showServices(request):
                     spid = pk,
                     customer_id=int(id),
                     service_id=int(sid),
-                    comments=[],
+                    chat=[],
                     status="Pending"
                 )
                 print("aplser ", aplser)
