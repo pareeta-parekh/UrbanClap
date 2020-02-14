@@ -1,0 +1,70 @@
+{% extends 'category.html' %}
+    <h3> salon here</h3>
+{% block salon %}
+{% for objects in obj %}
+        {% if objects.is_deleted == False %}
+    <ul>
+        <br>
+        <li style="cursor: pointer;" id="li_{{objects.sid}}_{{objects.spid}}">{{objects.service_name}}</li>
+        <p id="cost_{{objects.sid}}_{{objects.spid}}">Cost : {{objects.service_cost}}</p>
+        <p id="desc_{{objects.sid}}_{{objects.spid}}">Description: {{objects.service_desc}}</p>
+        {% for objDesc in desc %}
+            {% if objects.sid == objDesc.sid %}
+            {% if objects.spid == objDesc.spid %}
+                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}">Comments: {{objDesc.comment_desc}}</p>
+                <script>
+                    $(document).ready(function(){
+                        $("#comment_{{objDesc.sid}}_{{objDesc.spid}}").hide();
+                        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+                            $("#comment_{{objDesc.sid}}_{{objDesc.spid}}").toggle();
+                        });
+                    });
+
+                </script>
+            {% endif %}
+            {% endif %}
+       
+        <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
+    </ul>
+    <script>
+        $(document).ready(function(){
+            $("#cost_{{objects.sid}}_{{objects.spid}}").hide();
+            $("#desc_{{objects.sid}}_{{objects.spid}}").hide();
+            $("#{{objects.spid}}_{{objects.sid}}").hide();
+        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+            $("#cost_{{objects.sid}}_{{objects.spid}}").toggle();
+            $("#desc_{{objects.sid}}_{{objects.spid}}").toggle();
+            $("#{{objects.spid}}_{{objects.sid}}").toggle();
+        });
+        });
+    </script>
+     {% endfor %}
+        {% endif %}
+{% endfor%}
+
+<script>
+function getId(ids)
+{
+        var idname , num;
+        console.log(ids)
+        idname = document.getElementById(ids);
+        console.log(idname);
+        num = ids.split("_");
+        //num2 = ids.substring(0,6);
+        console.log(num[0]);
+        console.log(num[1]);
+         $.ajax({
+            type:"get",
+            url: "/client/showService/",
+            data:{
+                    token: "{{token}}",
+                    provider_id : num[0],
+                    service_id : num[1]
+                }
+        })
+}
+</script>
+
+
+{% endblock %}
+

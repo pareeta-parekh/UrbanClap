@@ -1,0 +1,86 @@
+{% extends 'category.html' %}
+
+{% block carpenter %}
+{% for objects in obj %}
+    {% if objects.is_deleted == False %}
+<ul>
+    <li style="cursor: pointer;" id="li_{{objects.sid}}_{{objects.spid}}">{{objects.service_name}}</li>
+    <p id="cost_{{objects.sid}}">{{objects.service_cost}}</p>
+    <p id="desc_{{objects.sid}}">{{objects.service_desc}}</p>
+    {% for objDesc in desc %}
+            {% if objects.sid == objDesc.sid %}
+                {% if objects.spid == objDesc.spid %}
+                <p id="comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}">Comments: {{objDesc.comment_desc}}</p>
+                <script>
+                    $(document).ready(function(){
+                        $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").hide();
+                        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+                            $("#comment_{{objDesc.sid}}_{{objDesc.spid}}_{{objDesc.cid}}").toggle();
+                        });
+                    });
+
+                </script>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <p id="rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}">Rating :  </p>
+                
+        {% for key, values in ratings.items %}
+            <script>
+                console.log("{{key}}");
+                var keys = "{{key}}";
+                keyCondition = keys.split("_");
+                console.log("{{values}}");
+                if( "{{objects.sid}}" == keyCondition[0] && "{{objects.spid}}" == keyCondition[1])
+                {
+                    document.getElementById("rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").innerHTML = `Rating : {{values}}`;
+                    $(document).ready(function(){
+                        $("#rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").hide();
+                        $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+                    $("#rating_{{objects.sid}}_{{objects.spid}}_{{objects.cid}}").toggle();
+                });
+            });
+                }  
+            </script>
+        {% endfor %}
+    <button type="submit" onclick="getId(this.id)" id="{{objects.spid}}_{{objects.sid}}" name="{{objects.service_name}}">Request Service</button>
+</ul>
+<script>
+    $(document).ready(function(){
+        $("#cost_{{objects.sid}}").hide();
+        $("#desc_{{objects.sid}}").hide();
+        $("#{{objects.spid}}_{{objects.sid}}").hide();
+    $("#li_{{objects.sid}}_{{objects.spid}}").click(function(){
+        $("#cost_{{objects.sid}}").toggle();
+        $("#desc_{{objects.sid}}").toggle();
+        $("#{{objects.spid}}_{{objects.sid}}").toggle();
+      });
+    });
+</script>
+{% endif %}
+{% endfor%}
+
+<script>
+function getId(ids)
+{
+        var idname , num;
+        console.log(ids)
+        idname = document.getElementById(ids);
+        console.log(idname);
+        num = ids.split("_");
+        //num2 = ids.substring(0,6);
+        console.log(num[0]);
+        console.log(num[1]);
+         $.ajax({
+            type:"get",
+            url: "/client/showService/",
+            data:{
+                    token: "{{token}}",
+                    provider_id : num[0],
+                    service_id : num[1]
+                }
+        })
+}
+</script>
+
+{% endblock %}

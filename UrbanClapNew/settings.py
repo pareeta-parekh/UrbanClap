@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'client',
     'serviceProvider',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'UrbanClapNew.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'UrbanClapNew\\templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
