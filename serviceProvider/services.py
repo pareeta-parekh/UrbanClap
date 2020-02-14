@@ -12,54 +12,82 @@ from django.core.exceptions import ObjectDoesNotExist
 def addservice(request):
     if request.method == "GET":
         try:
-            tkn = request.session['token']
-            print(tkn)
+            token = request.session['token']
+            print(token)
             try:
 
-                # spobj = Serviceprovider.objects.get(token_id = token)
-                return render(request, 'serviceProvider/services.html', {'tkn':tkn})
+                spobj = Serviceprovider.objects.get(token_id = token)
+                serviceLS = ServiceList.objects.filter(spid=spobj.id)
+                return render(request, 'serviceProvider/services.html', {'token':token,'services':serviceLS})
                 # return Response("All data here")
 
             except ObjectDoesNotExist:
-                return Response({'message': 'You are not Logged In...'})
+                return redirect('/serviceprovider/login/')
+                # return Response({'message': 'You are not Logged In...'})
         except KeyError:
             return redirect('/serviceprovider/login/')
     
     if request.method == "POST":
-        try:    
-            token = request.headers['token']
-            condata = []
-            spobj = Serviceprovider.objects.get(token_id = token)
-            if spobj.services != []:
-                for obj in spobj.services:
-                    if obj.service_name == request.POST['service_name'] and obj.service_category == request.POST['service_category']:
-                        return Response("Service Already Exists")
+        try:
+            token = request.session['token']
+            try:    
+                
+                condata = []
+                
+                spobj = Serviceprovider.objects.get(token_id = token)
+                if spobj.services != []:
+                    for obj in spobj.services:
+                        if obj.service_name == request.POST['service_name'] and obj.service_category == request.POST['service_category']:
+                            data = {
+                                'title':'Try Again!',
+                                'message':'Service Already Exists...',
+                                'icon':'warning',
+                                'url': '/serviceprovider/addservice/',
+                                'token':token,
+                            }
+                            # return redirect('/serviceprovider/addservice/')
+                            return render(request, 'serviceProvider/services.html', data)
+                            # return Response("Service Already Exists")
 
-            condata.append(spobj)
-            if spobj.services == []:
-                sid = 1
-            else:
-                sid = spobj.services[len(spobj.services) - 1].sid + 1
-            condata.append(sid)
-            condata.append(spobj.id)
-            service = AddServiceSerializer(data = request.data, context = condata)
-            if service.is_valid():
-                service.save()
-                print(service)
-                return Response(service.data)
-                spobj.save()
-            return Response(service.errors)
+                condata.append(spobj)
+                if spobj.services == []:
+                    sid = 1
+                else:
+                    sid = spobj.services[len(spobj.services) - 1].sid + 1
 
-        except ObjectDoesNotExist:
-            return Response({'message': 'You are not Logged In...'})
+                condata.append(sid)
+                condata.append(spobj.id)
+                service = AddServiceSerializer(data = request.data, context = condata)
+                if service.is_valid():
+                    service.save()
+                    spobj.save()
+                    # print(service)
+                    data = {
+                        'title':'Good Job!',
+                        'message':'Service Added Successfully...',
+                        'icon':'success',
+                        'url': '/serviceprovider/addservice/',
+                        'token':token,
+                        'data': service.data,
+                    }
+                    return render(request, 'serviceProvider/services.html', data)
+                    # return Response(service.data)
+                    
+                return Response(service.errors)
 
+            except ObjectDoesNotExist:
+                # return Response({'message': 'You are not Logged In...'})
+                return redirect('/serviceprovider/login/')
+        except KeyError:
+            return redirect('/serviceprovider/login/')
 
 
 @api_view(['PUT'])
 def updateservice(request, asid):
+    
     if request.method == "PUT":
         try:
-            token = request.headers['token']
+            token = request.session['token']
             spobj = Serviceprovider.objects.get(token_id = token)
             if request.POST['status'] == "Reject":
                 for obj in spobj.applied_service:
@@ -103,7 +131,7 @@ def deleteservice(request, sid):
     if request.method == 'DELETE':
         # if request.method == "GET":
         try:
-            token = request.headers['token']
+            token = request.session['token']
             spobj = Serviceprovider.objects.get(token_id = token)                    
             count = 0
             for obj in spobj.applied_service:
@@ -123,3 +151,15 @@ def deleteservice(request, sid):
 
         except ObjectDoesNotExist:
             return Response({'message': 'You are not Logged In...'})
+
+@api_view(['GET'])
+def appliedservices(request):
+    if request.method == 'GET':
+        token = request.session['token']
+        srprObj = Serviceprovider.objects.get(token_id = token)
+        
+
+        serviceLS = ServiceList.objects.filter(spid=srprObj.id)        
+        return render(request, 'serviceProvider/appliedService.html', {'token':token,'srprObj':srprObj,'serviceLS':serviceLS})
+
+        

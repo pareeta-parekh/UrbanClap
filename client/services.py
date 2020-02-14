@@ -10,8 +10,9 @@ from django.core.exceptions import ObjectDoesNotExist
 @api_view(['GET'])
 def showServices(request):
     if request.method == 'GET':
+        print("In services")
         try:
-            token = request.GET['token']
+            token = request.session['token']
             print(token)
             cust = Customer.objects.get(token_id=token)
             id = cust.id
@@ -58,16 +59,18 @@ def showServices(request):
             return render(request, "category.html", {'context': 'You are not LoggedIn...'})
 
 @api_view(['GET' , 'POST'])
-def categoryShow(request, token):
+def categoryShow(request):
     print("-------in function---------")
     if request.method == 'GET':
         try:
+            token = request.session['token']
             cust = Customer.objects.get(token_id = token)
             return render(request, "category.html", {'token':token})
         except:
             return Response("Plz Login..")
     if request.method == 'POST':
         try:
+            token = request.session['token']
             cust = Customer.objects.get(token_id = token)
             print(cust)
             print("-------in post----------")
@@ -232,8 +235,9 @@ def deleteService(request):
 
 
 @api_view(['GET'])
-def req_service(request, token):
+def req_service(request):
     print("req service")
+    token = request.session['token']
     cust_id = Customer.objects.get(token_id=token)
     print(cust_id)
     if request.method == 'GET':
@@ -244,7 +248,7 @@ def req_service(request, token):
                 cust.append(obj)
             print(obj.is_deleted)
         print(cust_id.services_requested)
-        context = {"c_req": cust}
+        context = {"c_req": cust, 'token':token}
         return render(request, "showReqService.html", context)
 
     # if request.method == 'POST':

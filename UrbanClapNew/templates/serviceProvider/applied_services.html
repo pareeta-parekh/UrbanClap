@@ -10,7 +10,7 @@ Services
     <hr>
 
     <div class="row">
-        <form action="" method="post"class="col-4">{%csrf_token%}
+        <form action="" method="post"class="col-4">
             <div class="form-group">
                 <label>Service Category</label>
                 <br>
@@ -60,7 +60,6 @@ Services
                     <div class="card-body">
                       <h5 class="card-title">{{service.service_category}}</h5>
                       <p class="card-text">{{service.service_name}}</p>
-                      <p class="card-text">{{service.service_desc}}</p>
                       <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
                     </div>
                   </div>

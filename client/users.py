@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from serviceProvider.models import *
 from .serializers import *
 
+from django.shortcuts import redirect
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from random import sample
@@ -13,10 +15,11 @@ from random import sample
 def register(request):
 
     if request.method == 'GET':
-        client = Customer.objects.all()
-        print(client.values())
-        serializers = CustomerSerializer(client, many=True)
-        return Response(serializers.data)
+        # client = Customer.objects.all()
+        # print(client.values())
+        # serializers = CustomerSerializer(client, many=True)
+        # return Response(serializers.data)
+        return render(request, 'registration.html')
 
     if request.method == 'POST':
         addressline_1 = request.data['addline_1']
@@ -35,51 +38,93 @@ def register(request):
             zipcode=zipcode
         )
 
-        serializers = CustomerSerializer(data=request.data, context=address)
-        if serializers.is_valid():
-            serializers.save()
-            return Response("done!")
-        return Response(serializers.errors)
+        serializer = CustomerSerializer(data=request.data, context=address)
+        if serializer.is_valid():
+            title = 'Good Job!'
+            message = 'Registation Successfully...!'
+            icon = 'success'
+            serializer.save()
+            return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
+            # serializer.save()
+            # return Response("done!")
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+            )    
 
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 def login(request):
+    if request.method == 'GET':
+        return render(request, 'login.html')
+
     if request.method == 'POST':
         email = request.data['email']
         password = request.data['password']
 
         try:
-            cust = Customer.objects.get(email=email, password=password)
+            cust = Customer.objects.get(email=email)
+            try:
+                cust = Customer.objects.get(email=email,password=password)
             
-            if cust.token_id == None:
-                sequence = [i for i in range(100)]
-                smple = sample(sequence, 5)
-                user_token = ''.join(map(str, smple))
+                if cust.token_id == None:
+                    sequence = [i for i in range(100)]
+                    smple = sample(sequence, 5)
+                    user_token = ''.join(map(str, smple))
 
-                token, created = Token.objects.get_or_create(user_id = user_token)
+                    token, created = Token.objects.get_or_create(user_id = user_token)
 
-                if not created:
-                    token.created = user_token
-                    token.save()
+                    if not created:
+                        token.created = user_token
+                        token.save()
 
-                cust.token_id = token.key
-                cust.save()
+                    cust.token_id = token.key
+                    cust.save()
 
-                return Response({'message': 'You are LoggedIn...'})
+                    request.session['token'] = token.key
+                    data = {
+                        'title':'Good Job!',
+                        'message':'You are LoggedIn...',
+                        'icon':'success',
+                        'url': '/client/category/',
+                    }
+                    # return redirect('/serviceprovider/addservice/')
+                    return render(request, 'blank.html', data)
+                    # return Response({'message': 'You are LoggedIn...'})
 
-            else:
-                return Response({'message': 'You are already LoggedIn...'})
+                else:
+                    request.session['token'] = cust.token_id
+                    data = {
+                        'title':'Good Job!',
+                        'message':'You are already LoggedIn...',
+                        'icon':'success',
+                        'url': '/client/category/',
+                    }
+                    # return redirect('/serviceprovider/addservice/')
+                    return render(request, 'blank.html', data)
+                    # return Response({'message': 'You are already LoggedIn...'})
 
+            except ObjectDoesNotExist:
+                title = 'Try again!'
+                message = 'Password does not match...'
+                icon = 'error'
+                return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
         except ObjectDoesNotExist:
-            return Response({'message': 'Email not found...'})
+            title = 'Try again!'
+            message = 'Password does not match...'
+            icon = 'error'
+            return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
 
 @api_view(['GET'])
-def logout(request, token):
+def logout(request):
     try:
+        token = request.session['token']
         cust = Customer.objects.get(token_id = token)
         cust.token_id = None
         cust.save()
-        return Response({'message': 'Logged out...'})
+        del request.session['token']
+        return redirect('/client/login/')
+        # return Response({'message': 'Logged out...'})
     except ObjectDoesNotExist:
         return Response({'message': 'Record not found...'})
 
@@ -88,6 +133,7 @@ def logout(request, token):
 def updatepass(request, token):
     if request.method == 'PUT':
         try:
+            token = request.token['token']
             cobj = Customer.objects.get(token_id = token)
             if cobj.password == request.POST['old_password']:
                 cobj.password = request.POST['new_password']

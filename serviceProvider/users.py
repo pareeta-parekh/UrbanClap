@@ -54,7 +54,7 @@ def sprlogin(request):
             servicePR = Serviceprovider.objects.get(email=email)
             
             try:
-                servicePR = Serviceprovider.objects.get(password=password)
+                servicePR = Serviceprovider.objects.get(email=email,password=password)
                 
                 if servicePR.token_id == None:
                     sequence = [i for i in range(100)]
@@ -109,14 +109,24 @@ def sprlogin(request):
 @api_view(['GET'])
 def sprlogout(request):
     if request.method == 'GET':
-        del request.session['token']
-        return redirect('/serviceprovider/login/')
+        try:
+            token = request.token['token']
+            servicePR = Serviceprovider.objects.get(token_id = token)
+            servicePR.token_id = None
+            servicePR.save()
+            del request.session['token']
+            return redirect('/serviceprovider/login/')
+            # return Response({'message': 'Logged out...'})
+        except ObjectDoesNotExist:
+            return Response({'message': 'Record not found...'})
+        
    
 
 @api_view(['PUT'])
 def updatepass(request):
     if request.method == 'PUT':
         try:
+            token = request.token['token']
             spobj = Serviceprovider.objects.get(token_id = request.headers['token'])
             print(request.headers['token'])
             if spobj.password == request.POST['old_password']:

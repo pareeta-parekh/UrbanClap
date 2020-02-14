@@ -63,6 +63,8 @@
 <script>
 function getId(ids)
 {
+        console.log("In fucntion");
+        
         var idname , num;
         console.log(ids)
         idname = document.getElementById(ids);
@@ -75,7 +77,6 @@ function getId(ids)
             type:"get",
             url: "/client/showService/",
             data:{
-                    token: "{{token}}",
                     provider_id : num[0],
                     service_id : num[1]
                 }

@@ -11,31 +11,33 @@ def srpr_chat(request, cust_id, service_id):
         
     if request.method == 'GET':
         try:
-            token = request.headers['token']
+            token = request.session['token']
             srprObj = Serviceprovider.objects.get(token_id = token)
             
             # messages = Appsercomment.objects.filter(user_id = srprObj.id)
 
             clientObj = Customer.objects.get(id=cust_id)
+            
             ch = 0
-
             for apsr in srprObj.applied_service:
 
-                if apsr.chat == []:
-                    return Response({'message': 'No chat found..'})
+                # if apsr.chat == []:
+                #     return Response({'message': 'No chat found..'})
 
                 if apsr.customer_id == clientObj.id and service_id == apsr.service_id:
 
-                    data = []
+                    # data = []
 
-                    for chats in apsr.chat:
+                    # for chats in apsr.chat:
 
-                        data.append({
-                            'user_type': chats.user_type,
-                            'user_id': chats.user_id,
-                            'text': chats.text
-                        },)
-                    return Response(data)
+                    #     data.append({
+                    #         'user_type': chats.user_type,
+                    #         'user_id': chats.user_id,
+                    #         'text': chats.text
+                    #     },)
+                    # return Response(data)
+                    data = {'message':apsr.chat, 'token':token}
+                    return render(request, 'serviceProvider/chat.html', data)
 
                 else:
                     ch = ch + 1
@@ -48,16 +50,18 @@ def srpr_chat(request, cust_id, service_id):
 
     elif request.method == 'POST':
         try:  
-            token = request.headers['token']         
+            token = request.session['token']         
             srprObj = Serviceprovider.objects.get(token_id = token)
 
             clientObj = Customer.objects.get(id=cust_id)
             # services = ServiceList.objects.get(sid=service_id)
-
+            
             ch = 0
             for apsr in srprObj.applied_service:
+                appliedSR = Appliedservice.objects.get(service_id=apsr.service_id, spid = srprObj.id, customer_id = apsr.customer_id)
+                print("applSR", appliedSR.status)
 
-                if apsr.status == 'Accepted':
+                if apsr.status == 'Accepted' and appliedSR.status == 'Accepted':
                     appserCommentObj = Appsercomment.objects.create(
                         user_type="Service Provider",
                         user_id=srprObj.id,
@@ -67,20 +71,23 @@ def srpr_chat(request, cust_id, service_id):
                     if apsr.customer_id == clientObj.id and service_id == apsr.service_id:
 
                         apsr.chat.append(appserCommentObj)
-
+                        appliedSR.chat.append(appserCommentObj)
+                        appliedSR.save()
                         appserCommentObj.save()
                         srprObj.save()
 
-                        data = []
+                        # data = []
 
-                        for chats in apsr.chat:
+                        # for chats in apsr.chat:
 
-                            data.append({
-                                'user_type': chats.user_type,
-                                'user_id': chats.user_id,
-                                'text': chats.text
-                            },)
-                        return Response(data)
+                        #     data.append({
+                        #         'user_type': chats.user_type,
+                        #         'user_id': chats.user_id,
+                        #         'text': chats.text
+                        #     },)
+                        # return Response(data)
+                        data = {'message':apsr.chat, 'token':token}
+                        return render(request, 'serviceProvider/chat.html', data)
 
                     elif service_id == apsr.service_id:
                         ch = ch + 1
