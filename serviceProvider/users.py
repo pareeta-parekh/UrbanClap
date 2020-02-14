@@ -51,45 +51,53 @@ def sprlogin(request):
         password = request.data['password']
 
         try:
-            servicePR = Serviceprovider.objects.get(email=email, password=password)
+            servicePR = Serviceprovider.objects.get(email=email)
             
-            if servicePR.token_id == None:
-                sequence = [i for i in range(100)]
-                smple = sample(sequence, 5)
-                user_token = ''.join(map(str, smple))
+            try:
+                servicePR = Serviceprovider.objects.get(password=password)
+                
+                if servicePR.token_id == None:
+                    sequence = [i for i in range(100)]
+                    smple = sample(sequence, 5)
+                    user_token = ''.join(map(str, smple))
 
-                token, created = Token.objects.get_or_create(user_id = user_token)
+                    token, created = Token.objects.get_or_create(user_id = user_token)
 
-                if not created:
-                    token.created = user_token
-                    token.save()
+                    if not created:
+                        token.created = user_token
+                        token.save()
 
-                servicePR.token_id = token.key
-                servicePR.save()
+                    servicePR.token_id = token.key
+                    servicePR.save()
 
-                request.session['token'] = token.key
-                data = {
-                    'title':'Good Job!',
-                    'message':'You are LoggedIn...',
-                    'icon':'success',
-                    'url': '/serviceprovider/addservice/',
-                }
-                # return redirect('/serviceprovider/addservice/')
-                return render(request, 'serviceProvider/blank.html', data)
-                # return Response({'message': 'You are LoggedIn...'})
+                    request.session['token'] = token.key
+                    data = {
+                        'title':'Good Job!',
+                        'message':'You are LoggedIn...',
+                        'icon':'success',
+                        'url': '/serviceprovider/addservice/',
+                    }
+                    # return redirect('/serviceprovider/addservice/')
+                    return render(request, 'serviceProvider/blank.html', data)
+                    # return Response({'message': 'You are LoggedIn...'})
 
-            else:
+                else:
 
-                request.session['token'] = servicePR.token_id
-                data = {
-                    'title':'Good Job!',
-                    'message':'You are already LoggedIn...',
-                    'icon':'success',
-                    'url': '/serviceprovider/addservice/',
-                }
-                # return redirect('/serviceprovider/addservice/')
-                return render(request, 'serviceProvider/blank.html', data)
-                # return Response({'message': 'You are already LoggedIn...'})
+                    request.session['token'] = servicePR.token_id
+                    data = {
+                        'title':'Good Job!',
+                        'message':'You are already LoggedIn...',
+                        'icon':'success',
+                        'url': '/serviceprovider/addservice/',
+                    }
+                    # return redirect('/serviceprovider/addservice/')
+                    return render(request, 'serviceProvider/blank.html', data)
+                    # return Response({'message': 'You are already LoggedIn...'})
+            except ObjectDoesNotExist:
+                title = 'Try again!'
+                message = 'Password does not match...'
+                icon = 'error'
+                return render(request, 'serviceProvider/login.html',{'title':title,'message': message, 'icon': icon})
 
         except ObjectDoesNotExist:
             title = 'Try again!'

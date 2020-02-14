@@ -15,6 +15,7 @@ def addservice(request):
             tkn = request.session['token']
             print(tkn)
             try:
+
                 # spobj = Serviceprovider.objects.get(token_id = token)
                 return render(request, 'serviceProvider/services.html', {'tkn':tkn})
                 # return Response("All data here")
