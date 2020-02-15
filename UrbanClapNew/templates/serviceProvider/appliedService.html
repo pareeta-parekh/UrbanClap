@@ -15,7 +15,7 @@ Requested Services
         {% if service.status == 'Accepted' %}
             <li>{{service.service_id.service_name}}</li>
             <li>{{service.status}}</li>
-            <a href="/serviceprovider/chat/{{apsr.customer_id}}/{{apsr.service_id}}/" type="button" class="btn btn-success">Chat</a>
+            <a href="/serviceprovider/chat/{{service.customer_id.id}}/{{service.service_id.id}}/" type="button" class="btn btn-success">Chat</a>
         {% else %}
             <li>{{service.service_id.service_name}}</li>
             <li>{{service.status}}</li>

@@ -11,7 +11,7 @@ urlpatterns = [
     path('logout/<str:token>/', logout),
     path('showService/' , showServices),
     path('category/' , categoryShow ),
-    path('chat/<str:token>/<int:srpr_id>/<int:service_id>/', client_chat),
+    path('chat/<int:srpr_id>/<int:service_id>/', client_chat),
     path('req_service/' , req_service),
     path('del_Service/' , deleteService),
     path('updatepassword/<str:token>/', updatepass),
