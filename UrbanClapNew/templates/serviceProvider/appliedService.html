@@ -1,0 +1,52 @@
+{% extends "serviceProvider/base.html" %}
+
+{% block title %}
+Requested Services
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3> Services Requested </h3>
+    <hr>
+    
+    {% for service in services %}
+    {% if service.is_deleted == False %}
+    <div id="blk_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}" class="card-body">
+        {% if service.status == 'Accepted' %}
+            <li>{{service.service_id.service_name}}</li>
+            <li>{{service.status}}</li>
+            <a href="/serviceprovider/chat/{{service.customer_id.id}}/{{service.service_id.id}}/" type="button" class="btn btn-success">Chat</a>
+        {% else %}
+            <li>{{service.service_id.service_name}}</li>
+            <li>{{service.status}}</li>
+            <button type="button" id="del_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
+            onclick="del(this.id)" class="btn btn-danger">Update Status</button>
+            <!-- <a href="/serviceprovider/" type="button" class="btn btn-danger">Delete</a> -->
+        {% endif %}<br>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <script>
+        function del(id){
+            var ids = id.split("_");
+            console.log(ids);
+            var updatestatus = prompt("Enter new status")
+            $.ajax({
+                type:'post',
+                url:'/serviceprovider/updateservice/',
+                data:{
+                    'status':updatestatus,
+                    'sid':ids[1],
+                    'asid':ids[2],
+                    'cid':ids[3]
+                },
+                success: function (data) {
+                    alert(data);                    
+                }
+            })
+
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js">
+</div>
+{% endblock %}

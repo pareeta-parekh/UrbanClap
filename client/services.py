@@ -20,6 +20,7 @@ def showServices(request):
                 sid = request.GET['service_id']
                 pk = request.GET['provider_id']
                 print("sid", sid)
+                print("pk", pk)
                 ser = Serviceprovider.objects.get(id=pk)
                 if ser.applied_service == []:
                     asid = 1
@@ -29,24 +30,24 @@ def showServices(request):
 
                 aplser = Appliedservice.objects.create(
                     asid=asid,
-                    spid = pk,
-                    customer_id=int(id),
-                    service_id=int(sid),
+                    spid = ser,
+                    customer_id=cust,
+                    service_id = ServiceList.objects.get(sid = int(sid), spid = ser),
                     chat=[],
                     status="Pending"
                 )
                 print("aplser ", aplser)
                 ser.applied_service.append(aplser)
                 ser.save()
-                obj = ServiceList.objects.get(sid=sid, spid=pk)
+                obj = ServiceList.objects.get(sid=sid, spid=ser)
                 print("--------------obj---------", obj)
                 serObj = CustService.objects.create(
-                    cust_id=int(id),
+                    cust_id=cust,
                     service_name=obj.service_name,
                     service_price=obj.service_cost,
                     status="Pending",
                     service_provider=obj.spid,
-                    service_id=obj.sid,
+                    service_id=obj,
                 )
                 cust = Customer.objects.get(id=id)
                 cust.services_requested.append(serObj)
@@ -58,16 +59,18 @@ def showServices(request):
             return render(request, "category.html", {'context': 'You are not LoggedIn...'})
 
 @api_view(['GET' , 'POST'])
-def categoryShow(request, token):
+def categoryShow(request):
     print("-------in function---------")
     if request.method == 'GET':
         try:
+            token = request.session['token']
             cust = Customer.objects.get(token_id = token)
             return render(request, "category.html", {'token':token})
         except:
             return Response("Plz Login..")
     if request.method == 'POST':
         try:
+            token = request.session['token']
             cust = Customer.objects.get(token_id = token)
             print(cust)
             print("-------in post----------")
@@ -80,7 +83,7 @@ def categoryShow(request, token):
                     sum = 0
                     comments = CustComments.objects.all()
                     for sl in obj:
-                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        desc = CustComments.objects.filter(sid = sl, spid = sl.spid)
                         print("desc",desc)
                         for des in desc:
                             sum = (sum + int(des.rating))
@@ -89,13 +92,17 @@ def categoryShow(request, token):
                             desclen = 1
                         else:
                             desclen = int(desc.count())
-                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid.id)] = sum / desclen
                         sum = 0
                     print(ratdictionary)
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
+                            print("objs", objs.id)
+                            print("cusappserid", cusapp.service_id.id)
+                            print("cussp", cusapp.service_provider.id)
+                            print("objspid", objs.spid.id)
+                            if cusapp.service_id.id == objs.id and cusapp.service_provider.id == objs.spid.id and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objduplicate)
                             else:
@@ -121,7 +128,7 @@ def categoryShow(request, token):
                     sum = 0
                     comments = CustComments.objects.all()
                     for sl in obj:
-                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        desc = CustComments.objects.filter(sid = sl, spid = sl.spid)
                         print("desc",desc)
                         for des in desc:
                             sum = (sum + int(des.rating))
@@ -130,14 +137,14 @@ def categoryShow(request, token):
                             desclen = 1
                         else:
                             desclen = int(desc.count())
-                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid.id)] = sum / desclen
                         sum = 0
                     print(ratdictionary)
                     objduplicate = obj
                     print("objduplicate",objduplicate)
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
+                            if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("status", cusapp.status)
                                 print(objs.service_name)
@@ -162,7 +169,7 @@ def categoryShow(request, token):
                     sum = 0
                     comments = CustComments.objects.all()
                     for sl in obj:
-                        desc = CustComments.objects.filter(sid = sl.sid, spid = sl.spid)
+                        desc = CustComments.objects.filter(sid = sl, spid = sl.spid)
                         print("desc",desc)
                         for des in desc:
                             sum = (sum + int(des.rating))
@@ -171,13 +178,13 @@ def categoryShow(request, token):
                             desclen = 1
                         else:
                             desclen = int(desc.count())
-                        ratdictionary[str(sl.sid)+'_'+str(sl.spid)] = sum / desclen
+                        ratdictionary[str(sl.sid)+'_'+str(sl.spid.id)] = sum / desclen
                         sum = 0
                     print(ratdictionary)
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if int(cusapp.service_id) == int(objs.sid) and int(cusapp.service_provider) == int(objs.spid) and cusapp.status != "Completed" and cusapp.is_deleted == False:
+                            if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.status != "Completed" and cusapp.is_deleted == False:
                                 objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
                                 print("in if",objs.service_name)
                             else:
@@ -205,35 +212,53 @@ def deleteService(request):
         cust_id = request.GET['customer_id']
         print(cust_id)
         print("-----------------------service id", ids)
-        delObj = CustService.objects.filter(service_id=request.GET['service_id'],
-                                        cust_id = request.GET['customer_id'],
-                                        service_provider = request.GET['service_provider'])
+        delObj = CustService.objects.filter(service_id = ServiceList.objects.get(id = int(request.GET['service_id'])),
+                                        cust_id = Customer.objects.get(id = int(request.GET['customer_id'])),
+                                        service_provider = Serviceprovider.objects.get(id = int(request.GET['service_provider'])))
         print("delObj--------------",delObj)
         for obj in delObj:
             if obj.status == "Pending" and obj.is_deleted != True:
                 obj.is_deleted = True
                 obj.save()
+        delappObj = Appliedservice.objects.filter(service_id = ServiceList.objects.get(id = int(request.GET['service_id'])),
+                                        customer_id = Customer.objects.get(id = int(request.GET['customer_id'])),
+                                        spid = Serviceprovider.objects.get(id = int(request.GET['service_provider'])))
+        print("delappObj--------------",delappObj)
+        for obja in delappObj:
+            if obja.status == "Pending" and obja.is_deleted != True:
+                obja.is_deleted = True
+                print(obja.is_deleted)
+                obja.save()
         # if delObj.status == "Pending":
         #     delObj.is_deleted = True
         #     delObj.save()
-        custObj = Customer.objects.get(id=request.GET['customer_id'])
+        custObj = Customer.objects.get(id = int(request.GET['customer_id']))
         print(custObj)
         for i in custObj.services_requested:
             print(i.status)
             print("service id ", i.service_id)
             print("upper service id ", ids)
-            if i.status == "Pending" and i.service_id == ids:
+            if i.status == "Pending" and i.service_id == ServiceList.objects.get(id = int(ids)):
                 print("in if")
                 print(i.is_deleted)
                 i.is_deleted = True
                 print(i.is_deleted)
                 custObj.save()
+        spobj = Serviceprovider.objects.get(id = int(request.GET['service_provider']))
+        for sp in spobj.applied_service:
+            if sp.status == "Pending" and sp.service_id == ServiceList.objects.get(id = int(ids)):
+                print("in if")
+                print(sp.is_deleted)
+                sp.is_deleted = True
+                print(sp.is_deleted)
+                spobj.save()
     return render(request, "showReqService.html")
 
 
 @api_view(['GET'])
-def req_service(request, token):
+def req_service(request):
     print("req service")
+    token = request.session['token']
     cust_id = Customer.objects.get(token_id=token)
     print(cust_id)
     if request.method == 'GET':
@@ -244,7 +269,7 @@ def req_service(request, token):
                 cust.append(obj)
             print(obj.is_deleted)
         print(cust_id.services_requested)
-        context = {"c_req": cust}
+        context = {"c_req": cust, 'token':token}
         return render(request, "showReqService.html", context)
 
     # if request.method == 'POST':

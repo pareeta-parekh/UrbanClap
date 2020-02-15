@@ -8,8 +8,9 @@ urlpatterns = [
     path('login/', sprlogin),
     path('logout/', sprlogout),
     path('addservice/', addservice),
-    path('updateservice/<str:asid>/', updateservice),
-    path('deletereq/<str:sid>/', deleteservice),
+    path('appliedservices/',appliedservices),
+    path('updateservice/', updateservice),
+    path('deletereq/', deleteservice),
     path('chat/<int:cust_id>/<int:service_id>/', srpr_chat),
     path('updatepassword/', updatepass),
 ]
