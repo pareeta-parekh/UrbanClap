@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <title> Category </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+<div>
+    <h3> Services Requested: </h3>
+        {% for objects in c_req %}
+        <form id="frm_{{objects.service_id}}" method="POST" action=".">{% csrf_token %}
+            {% if objects.is_deleted == False %}
+                <li> {{objects.service_name}} </li>
+                <li> {{objects.service_price}} </li>
+                <li> {{objects.status}} </li>
+                <br>
+                {% if objects.status == "Pending" %}
+                <script>
+                    console.log("in if")
+                    $(document).ready(function(){
+                        $("#{{objects.service_id}}").show();
+                    });
+                </script>
+                {% else %}
+                <script>
+                    console.log("else")
+                    $(document).ready(function(){
+                        $("#{{objects.service_id}}").hide();
+                    });
+                </script>
+                {% endif %}
+                <button type="button" id="{{objects.service_id}}" onclick="deleteService(this.id)">DELETE</button>
+                <br>
+        </form>
+
+        <form method="POST" action=".">{% csrf_token %}
+
+                {% if objects.status == "Completed" %}
+                Enter Your Comments: <input type="text" name="{{objects.service_name}}" id="{{objects.service_name}}">
+                <br><br>
+                Enter Your Ratings : <select id="rating_{{objects.service_name}}">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+                <br><br>
+                <button type="button" id="{{objects.service_name}}_{{objects.service_id}}_{{objects.service_provider}}" onclick="commentService(this.id)">Comment</button>
+                    <script>
+                        console.log("complete if")
+                        $(document).ready(function(){
+                            $("#{{objects.service_name}}").show();
+                            $("#{{objects.service_name}}_{{service_id}}").show();
+                        });
+                    </script>
+                {% else %}
+                    <script>
+                        console.log("complete else")
+                        $(document).ready(function(){
+                            $("#{{objects.service_name}}").hide();
+                            $("#{{objects.service_name}}_{{service_id}}").hide();
+                        });
+                    </script>
+                {% endif %}
+            {% endif %}
+        </form>
+        <script>
+            function deleteService(ids)
+            {
+                $.ajax({
+                            type:"get",
+                            url: "/client/del_Service/",
+                            data:{
+                                    customer_id : "{{objects.cust_id}}",
+                                    service_id : ids,
+                                }
+                        })
+                document.getElementById("frm_"+ids).remove()
+            }
+
+            function commentService(cid)
+            {
+                console.log("commnt id" , cid);
+                commnt = cid.split("_")
+                console.log(commnt[0]);
+                comDesc = document.getElementById(commnt[0]).value;
+                console.log(comDesc);
+                rate =document.getElementById("rating_" + commnt[0]).value;
+                console.log(rate)
+                
+                
+                $.ajax({
+                            type:"get",
+                            url: "/client/comments/",
+                            data:{
+                                    customer_id : "{{objects.cust_id}}",
+                                    service_id : commnt[1],
+                                    service_name : commnt[0],
+                                    service_provider : commnt[2],
+                                    desc : comDesc,
+                                    rate : rate
+                                }
+                        })
+            }
+        </script>
+        
+        {% endfor %}
+</div>
+
+</body>
+</html>
