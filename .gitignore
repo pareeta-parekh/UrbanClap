@@ -1,0 +1,9 @@
+env/
+.vscode/
+**/migrations/
+client/__pycache__/
+client/migrations/
+serviceProvider/__pycache__/
+serviceProvider/migrations/
+UrbanClapNew/__pycache__/
+requirements.txt
