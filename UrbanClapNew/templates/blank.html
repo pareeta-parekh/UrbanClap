@@ -1,0 +1,24 @@
+{% extends "serviceProvider/base.html" %}
+
+{% block content %}
+<script>
+    {% if message %}
+        swal({
+            title: "{{title}}",
+            text: "{{message}}",
+            icon: "{{icon}}",
+        }).then(function(){
+        if("{{icon}}" == "success"){
+            window.location = '{{url}}';
+        }
+        else if("{{icon}}" == "warning"){
+            window.location = '{{url}}';
+        }
+        else if("{{icon}}" == "error"){
+            window.location = '{{url}}';
+        }
+        });
+    {% endif %}
+      
+</script>
+{% endblock %}
