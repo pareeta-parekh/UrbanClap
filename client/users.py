@@ -153,14 +153,75 @@ def logout(request):
         return render(request, 'blank.html', data)
 
 
-@api_view(['PUT'])
-def updatepass(request, token):
-    if request.method == 'PUT':
+@api_view(['GET','POST'])
+def updatepass(request):
+    if request.method == 'GET':
         try:
-            cobj = Customer.objects.get(token_id = token)
-            if cobj.password == request.POST['old_password']:
-                cobj.password = request.POST['new_password']
-                cobj.save()
-                return Response("Passwword Updated")
-        except:
-            return Response({'message': 'Record not found'})
+            token = request.session['token']
+            try:
+                cobj = Customer.objects.get(token_id = token)
+                return render(request, 'updatePassword.html', {'token':token})
+            except ObjectDoesNotExist:
+                data = {
+                    'title': 'Try again!!!',
+                    'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+                    'url': '/client/login/',
+                    'icon': 'error',
+                }
+                return render(request, 'blank.html',data)
+        except KeyError:
+            return redirect('/client/login/')
+
+    if request.method == 'POST':
+        try:
+            token = request.session['token']
+            try:
+                cobj = Customer.objects.get(token_id = token)
+                if cobj.password == request.POST['old_password']:
+                    cobj.password = request.POST['new_password']
+                    cobj.save()
+                    # return Response("Passwword Updated")
+                    data = {
+                        'token':token,
+                        'title': 'Good Job!',
+                        'message': SuccessMessages._meta.get_field('success_update_password').get_default(),
+                        'url': '/client/login/',
+                        'icon': 'success',
+                    }
+                    return render(request, 'blank.html',data)
+                else:
+                    data = {
+                        'token':token,
+                        'title': 'Try again!',
+                        'message': 'Old Pasword invalid...',
+                        'icon': 'warning',
+                    }
+                    return render(request, 'updatePassword.html',data)
+            except ObjectDoesNotExist:
+                # return Response({'message': 'Record not found'})
+                data = {
+                    'token':token,
+                    'title': 'Try again!!!',
+                    'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+                    'url': '/client/updatepassword/',
+                    'icon': 'error',
+                }
+                return render(request, 'blank.html',data)
+        except KeyError:
+            data = {
+                'title': 'Try again!!!',
+                'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+                'url': '/client/login/',
+                'icon': 'error', 
+            }
+            return render(request, 'blank.html',data)
+
+    # if request.method == 'POST':
+    #     try:
+    #         cobj = Customer.objects.get(token_id = token)
+    #         if cobj.password == request.POST['old_password']:
+    #             cobj.password = request.POST['new_password']
+    #             cobj.save()
+    #             return Response("Passwword Updated")
+    #     except:
+    #         return Response({'message': 'Record not found'})
