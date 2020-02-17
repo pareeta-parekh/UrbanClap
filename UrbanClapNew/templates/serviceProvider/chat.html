@@ -8,6 +8,7 @@ Chat
 <div class="container">
     <div class="col-sm-6">
 
+<<<<<<< HEAD
     
         <div class="card">
             
@@ -22,6 +23,29 @@ Chat
                         
                     {% endfor %}
                 {% endif %}
+=======
+        {% if not message %}
+            <h2>No chat found...</h2>
+        {% endif %}
+        <div class="card">
+            
+            <div class="card-body">
+            {% for msg in message %}
+                {% if msg.user_type == 'Client' %}
+                <h5 class="card-title ">{{msg.user_type}}</h5>
+                <p class="card-text ">
+                    {{msg.text}}
+                </p>
+                {% elif msg.user_type == 'Service Provider' %}
+                <h5 class="card-title text-right">{{msg.user_type}}</h5>
+                <p class="card-text text-right">
+                    {{msg.text}}
+                </p>
+                {% endif %}
+                
+            {% endfor %}
+            
+>>>>>>> bhautik
             </div>
             <div class="card-footer ">
                 <form action="" method="POST">
@@ -35,6 +59,9 @@ Chat
         </div>
     </div>
 </div>
+<<<<<<< HEAD
 <script>
 </script>
+=======
+>>>>>>> bhautik
 {% endblock %}

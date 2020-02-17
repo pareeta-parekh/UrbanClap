@@ -8,6 +8,9 @@ Requested Services
 <div class="container">
     <h3> Services Requested </h3>
     <hr>
+        {% if not c_req %}
+            <h2>No applied service...</h2>
+        {% endif %}  
         {% for objects in c_req %}
         <div id="div_{{objects.service_id.id}}_{{objects.service_provider.id}}">
             <form id="frm_{{objects.service_id.id}}_{{objects.service_provider.id}}" method="POST" action=".">{% csrf_token %}

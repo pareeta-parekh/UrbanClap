@@ -8,7 +8,7 @@ from .chat import *
 urlpatterns = [
     path('register/', register),
     path('login/' , login),
-    path('logout/<str:token>/', logout),
+    path('logout/', logout),
     path('showService/' , showServices),
     path('category/' , categoryShow ),
     path('chat/<int:srpr_id>/<int:service_id>/', client_chat),

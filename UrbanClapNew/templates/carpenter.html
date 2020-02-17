@@ -5,8 +5,13 @@
     {% if objects.is_deleted == False %}
     <ul>
         <li style="cursor: pointer;" id="li_{{objects.sid}}_{{objects.spid.id}}">{{objects.service_name}}</li>
+<<<<<<< HEAD
         <p id="cost_{{objects.sid}}_{{objects.spid.id}}">{{objects.service_cost}}</p>
         <p id="desc_{{objects.sid}}_{{objects.spid.id}}">{{objects.service_desc}}</p>
+=======
+        <p id="cost_{{objects.sid}}_{{objects.spid.id}}"> Cost : {{objects.service_cost}}</p>
+        <p id="desc_{{objects.sid}}_{{objects.spid.id}}"> Description : {{objects.service_desc}}</p>
+>>>>>>> bhautik
         {% for objDesc in desc %}
             {% if objects.sid == objDesc.sid.id %}
             {% if objects.spid.id == objDesc.spid.id %}

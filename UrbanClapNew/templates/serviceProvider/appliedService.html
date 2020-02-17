@@ -8,6 +8,7 @@ Requested Services
 <div class="container">
     <h3> Services Requested </h3>
     <hr>
+<<<<<<< HEAD
     
     {% for service in services %}
     {% if service.is_deleted == False %}
@@ -51,4 +52,88 @@ Requested Services
     </script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js">
 </div>
+=======
+
+    {% if not services %}
+        <h2>No applied service...</h2>
+    {% endif %}    
+    {% for service in services %}
+    
+        {% if service.is_deleted == False %}
+        <div id="blk_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}" class="card-body">
+            {% if service.status == 'Accepted' %}
+                <li>{{service.service_id.service_name}}</li>
+                <li>{{service.status}}</li>
+                <br>
+                <a href="/serviceprovider/chat/{{service.customer_id.id}}/{{service.service_id.id}}/" type="button" class="btn btn-success">Chat</a>
+                <button type="button" id="del_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
+                onclick="del(this.id)" class="btn btn-warning">Update Status</button>
+            {% else %}
+                <li>{{service.service_id.service_name}}</li>
+                <li>{{service.status}}</li>
+                <br>
+                <button type="button" id="del_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
+                onclick="del(this.id)" class="btn btn-warning">Update Status</button>
+                <a href="/serviceprovider/deletereq/{{service.service_id_id}}/" type="button" class="btn btn-danger">Delete</a>
+            {% endif %}<br>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+    <script>
+
+    {% if message %}
+        swal({
+            title: "{{title}}",
+            text: "{{message}}",
+            icon: "{{icon}}",
+        }).then(function(){
+        if("{{icon}}" == "success"){
+            window.location = '{{url}}';
+        }
+        else if("{{icon}}" == "warning"){
+            window.location = '{{url}}';
+        }
+        else if("{{icon}}" == "error"){
+            window.location = '{{url}}';
+        }
+        });
+    {% endif %}
+
+
+
+        function del(id){
+            var ids = id.split("_");
+            console.log(ids);
+            var updatestatus = prompt("Enter new status");
+            console.log("status",updatestatus);
+            if (updatestatus == null){
+                window.location = '/serviceprovider/appliedservices/';
+            }
+            else if(updatestatus == ""){
+                alert("Does not allow blank!!!");
+                window.location = '/serviceprovider/appliedservices/';
+            }
+            else{
+
+                $.ajax({
+                    type:'post',
+                    url:'/serviceprovider/updateservice/',
+                    data:{
+                        'status':updatestatus,
+                        'sid':ids[1],
+                        'asid':ids[2],
+                        'cid':ids[3]
+                    },
+                    success: function (data) {
+                        alert(data);
+                        window.location = '/serviceprovider/appliedservices/';                    
+                    }
+                });
+            }
+        }
+        
+    </script>
+
+>>>>>>> bhautik
 {% endblock %}

@@ -10,7 +10,7 @@ urlpatterns = [
     path('addservice/', addservice),
     path('appliedservices/',appliedservices),
     path('updateservice/', updateservice),
-    path('deletereq/', deleteservice),
+    path('deletereq/<int:sid>/', deleteservice),
     path('chat/<int:cust_id>/<int:service_id>/', srpr_chat),
     path('updatepassword/', updatepass),
 ]
