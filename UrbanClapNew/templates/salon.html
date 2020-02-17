@@ -10,12 +10,12 @@
         {% for objDesc in desc %}
             {% if objects.sid == objDesc.sid.id %}
             {% if objects.spid.id == objDesc.spid.id %}
-                <p id="comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}">Comments: {{objDesc.comment_desc}}</p>
+                <p id="comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}_{{objDesc.csid}}">Comments: {{objDesc.comment_desc}}</p>
                 <script>
                     $(document).ready(function(){
-                        $("#comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}").hide();
+                        $("#comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}_{{objDesc.csid}}").hide();
                         $("#li_{{objects.sid}}_{{objects.spid.id}}").click(function(){
-                            $("#comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}").toggle();
+                            $("#comment_{{objDesc.sid.id}}_{{objDesc.spid.id}}_{{objDesc.cid.id}}_{{objDesc.csid}}").toggle();
                         });
                     });
 
@@ -73,7 +73,7 @@ function getId(ids)
         console.log(num[1]);
          $.ajax({
             type:"get",
-            url: "/client/showService/",
+            url: "/client/show_service/",
             data:{
                     token: "{{token}}",
                     provider_id : num[0],

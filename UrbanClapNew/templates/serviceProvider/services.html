@@ -63,9 +63,13 @@ Services
                         </a>
                     <div class="card-body">
                       <h5 class="card-title">{{service.service_category}}</h5>
-                      <p class="card-text">{{service.service_name}}</p>
-                      <p class="card-text">{{service.service_desc}}</p>
-                      <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
+                      <p class="card-text">Name : {{service.service_name}}</p>
+                      <p class="card-text">Description : {{service.service_desc}}</p>
+                    {% for rating in service.comments %}
+                        <p class="card-text">Comments : {{rating.comment_desc}}</p>
+                        <p class="card-text">Ratings : {{rating.rating}}</p>
+                    {% endfor %}
+                      <a href="#" class="btn btn-primary">Cost : {{service.service_cost}}</a>
                     </div>
                   </div>
                 </div>

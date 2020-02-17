@@ -41,7 +41,13 @@ def showServices(request):
                 ser.save()
                 obj = ServiceList.objects.get(sid=sid, spid=ser)
                 print("--------------obj---------", obj)
+                cust = Customer.objects.get(id=id)
+                if cust.services_requested == []:
+                    csid = 1
+                else:
+                    csid = cust.services_requested[len(cust.services_requested) - 1].csid + 1
                 serObj = CustService.objects.create(
+                    csid = csid,
                     cust_id=cust,
                     service_name=obj.service_name,
                     service_price=obj.service_cost,
@@ -49,7 +55,7 @@ def showServices(request):
                     service_provider=obj.spid,
                     service_id=obj,
                 )
-                cust = Customer.objects.get(id=id)
+                
                 cust.services_requested.append(serObj)
                 cust.save()
             except Exception as e:
@@ -110,9 +116,11 @@ def categoryShow(request):
                             print("cusappserid", cusapp.service_id.id)
                             print("cussp", cusapp.service_provider.id)
                             print("objspid", objs.spid.id)
-                            if cusapp.service_id.id == objs.id and cusapp.service_provider.id == objs.spid.id and cusapp.status != "Completed" and cusapp.is_deleted == False:
-                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
-                                print("in if",objduplicate)
+                            if cusapp.status != "Completed" and cusapp.status != "Reject":
+                                if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.is_deleted == False:
+                                    objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                    print("status", cusapp.status)
+                                    print(objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
@@ -152,10 +160,11 @@ def categoryShow(request):
                     print("objduplicate",objduplicate)
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.status != "Completed" and cusapp.is_deleted == False:
-                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
-                                print("status", cusapp.status)
-                                print(objs.service_name)
+                            if cusapp.status != "Completed" and cusapp.status != "Reject":
+                                if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.is_deleted == False:
+                                    objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                    print("status", cusapp.status)
+                                    print(objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)
@@ -192,9 +201,11 @@ def categoryShow(request):
                     objduplicate = obj
                     for cusapp in cust.services_requested:
                         for objs in obj:
-                            if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.status != "Completed" and cusapp.is_deleted == False:
-                                objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
-                                print("in if",objs.service_name)
+                            if cusapp.status != "Completed" and cusapp.status != "Reject":
+                                if cusapp.service_id == objs and cusapp.service_provider == objs.spid and cusapp.is_deleted == False:
+                                    objduplicate = objduplicate.exclude(sid = objs.sid, spid = objs.spid)
+                                    print("status", cusapp.status)
+                                    print(objs.service_name)
                             else:
                                 print("else---------")
                                 print(objs.service_name)

@@ -114,12 +114,14 @@ def updateservice(request):
                             cusobj = Customer.objects.get(id = obj.customer_id.id)
                             for services in cusobj.services_requested:
                                 if services.service_id == obj.service_id and services.service_provider == spobj:
+                                    print("service_id : " , services.service_id.id)
+                                    print("privider id : " , services.status)
                                     apobj = Appliedservice.objects.get(spid = spobj, asid = int(asid))
                                     apobj.status = request.POST['status']
                                     apobj.save()
                                     services.status = request.POST['status']
                                     cusobj.save()
-                                    print("here",services.service_name)
+                                    print("here1",services.service_name)
                             obj.status = request.POST['status']
                             spobj.save()
                             return Response(SuccessMessages._meta.get_field('success_service_status').get_default())
@@ -131,13 +133,16 @@ def updateservice(request):
                         if obj.asid == int(asid):
                             cusobj = Customer.objects.get(id = obj.customer_id.id)
                             for services in cusobj.services_requested:
-                                if services.service_id == obj.service_id and services.service_provider == spobj:
-                                    apobj = Appliedservice.objects.get(spid = spobj, asid = int(asid))
-                                    apobj.status = request.POST['status']
-                                    apobj.save()
-                                    services.status = request.POST['status']
-                                    cusobj.save()
-                                    print("here",services.service_name)
+                                if services.status == "Pending" or services.status == "Accepted":
+                                    if services.service_id == obj.service_id and services.service_provider == spobj:
+                                        print("service_id : " , services.service_id.id)
+                                        print("privider id : " , services.status)
+                                        apobj = Appliedservice.objects.get(spid = spobj, asid = int(asid))
+                                        apobj.status = request.POST['status']
+                                        apobj.save()
+                                        services.status = request.POST['status']
+                                        cusobj.save()
+                                        print("here2",services.service_name)
                             obj.status = request.POST['status']
                             spobj.save()
                             return Response(SuccessMessages._meta.get_field('success_service_status').get_default())
