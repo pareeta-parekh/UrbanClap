@@ -166,7 +166,8 @@ def deleteservice(request,sid):
                 spobj = Serviceprovider.objects.get(token_id = token)                    
                 count = 0
                 for obj in spobj.applied_service:
-                    if obj.service_id.id == int(sid) and (obj.status == "Reject" or obj.status == "Pending"):
+                    print("status", obj.status)
+                    if obj.service_id.id == int(sid) and (obj.status == "Reject" or obj.status == "Pending") and obj.is_deleted == False:
                         count = count + 1
                 if count == 0:
                     sobj = ServiceList.objects.get(sid = sid)
