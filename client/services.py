@@ -274,8 +274,10 @@ def req_service(request):
             print("in method get")
             cust = []
             for obj in cust_id.services_requested:
-                if obj.is_deleted == False:
-                    cust.append(obj)
+                sobj = ServiceList.objects.filter(spid = obj.service_provider, sid = obj.service_id.sid)
+                for objs in sobj:
+                    if obj.is_deleted == False and objs.is_deleted == False:
+                        cust.append(obj)
                 print(obj.is_deleted)
             print(cust_id.services_requested)
             context = {"c_req": cust, 'token':token}

@@ -40,7 +40,8 @@ def addservice(request):
                 spobj = Serviceprovider.objects.get(token_id = token)
                 if spobj.services != []:
                     for obj in spobj.services:
-                        if obj.service_name == request.POST['service_name'] and obj.service_category == request.POST['service_category']:
+                        print(obj.is_deleted)
+                        if obj.service_name == request.POST['service_name'] and obj.service_category == request.POST['service_category'] and obj.is_deleted == False:
                             data = {
                                 'title':'Try Again!',
                                 'message':ErrorMessages._meta.get_field('error_service_exists').get_default(),
