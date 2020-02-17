@@ -7,14 +7,14 @@ Login
 <div class="container col-4">
     <h3>Service Provider Login</h3>
     <hr>
-    <form action="" method="post">{% csrf_token %}
+    <form action="" onsubmit="return checkloginData()" method="post">{% csrf_token %}
         <div class="fomr-group">
             <label>Email</label>
-            <input type="email" name="email" id="email" class="form-control" required>
+            <input type="email" name="email" id="email" class="form-control" required placeholder="For ex. yourname@email.com">
         </div>
         <div class="fomr-group">
             <label>Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control" minlength="8" required placeholder="Password">
         </div>
         <br>
         <button type="submit" class="btn btn-success">Login</button>
@@ -25,12 +25,62 @@ Login
 
 
 <script>
-    {% if message %}
-        swal({
-            title: "{{title}}",
-            text: "{{message}}",
-            icon: "{{icon}}",
-        });
-    {% endif %}
+    function checkloginData(){
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        
+        if (email == ""||email == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Email required',
+                'icon': 'warning',
+            });
+        }
+        else{
+            if (email.match(mailformat)){
+                if (password.length < 8){
+                    swal({
+                        'title':'Try again!',
+                        'text': 'Enter Password at least 8 character password',
+                        'icon': 'error',
+                    });
+                }
+                else{
+                    
+                    $.ajax({
+                        type:'POST',
+                        url:'/serviceprovider/login/',
+                        dataType: 'json',
+                        data : {
+                            'email': email,
+                            'password':password,
+                        },
+                        success:function(msg){
+                            swal({
+                                'title':msg.title,
+                                'text': msg.message,
+                                'icon': msg.icon,
+                            }).then(function(){
+                                if(msg.icon=='success'){
+                                    window.location = msg.url;
+                                }
+                                
+                            });
+                        }
+                    });
+                    //return true;
+                }          
+            }
+            else{
+                swal({
+                    'title':'Try again!',
+                    'text': 'Invalid Email...',
+                    'icon': 'error',
+                });
+            }
+        }
+        return false;
+    }
 </script>
 {% endblock %}

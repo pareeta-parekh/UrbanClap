@@ -9,7 +9,7 @@ Client Registration
     <h3>Client Registration</h3>
     <hr>
 
-    <form action="" method="post">{% csrf_token %}
+    <form action="" method="post" onsubmit="return checkRegistrationData()">{% csrf_token %}
         <div class="form-group">
             <label>User Name</label>
             <br>
@@ -73,17 +73,108 @@ Client Registration
 </div>
 
 <script>
-    {% if message %}
-        swal({
-            title: "{{title}}",
-            text: "{{message}}",
-            icon: "{{icon}}",
-        }).then(function(){
-            if ("{{icon}}" == "success"){
-                window.location = '/client/login/';
+    function checkRegistrationData(){
+        var full_name = document.getElementById('full_name').value;
+        var email = document.getElementById('email').value;
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var password = document.getElementById('password').value;
+        var cpassword = document.getElementById('cpassword').value;
+        var phone = document.getElementById('phone').value;
+        var phoneformat = /^\d{10}$/;
+        var addline_1 = document.getElementById('addline_1').value;
+        var addline_2 = document.getElementById('addline_2').value;
+        var country = document.getElementById('country').value;
+        var state = document.getElementById('state').value;
+        var city = document.getElementById('city').value;
+        var zipcode = document.getElementById('zipcode').value;
+        var zipcodeformat = /^\d{6}$/;
+        
+        if (email == ""||email == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Email required',
+                'icon': 'warning',
+            });
+        }
+        else{
+            if (email.match(mailformat)){
+                if (password.length < 8){
+                    swal({
+                        'title':'Try again!',
+                        'text': 'Enter Password at least 8 character password',
+                        'icon': 'error',
+                    });
+                }
+                else{
+                    if (password == cpassword){
+                        if(mobile.match(phoneformat)){
+                            if(zipcode.match(zipcodeformat)){
+                                $.ajax({
+                                    type:'POST',
+                                    url:'/client/register/',
+                                    dataType: 'json',
+                                    data : {
+                                        'full_name':full_name,
+                                        'email': email,
+                                        'password':password,
+                                        'cpassword':cpassword,
+                                        'phone':phone,
+                                        'addline_1':addline_1,
+                                        'addline_2':addline_2,
+                                        'country':country,
+                                        'state':state,
+                                        'city':city,
+                                        'zipcode':zipcode,
+                                    },
+                                    success:function(msg){
+                                        swal({
+                                            'title':msg.title,
+                                            'text': msg.message,
+                                            'icon': msg.icon,
+                                        }).then(function(){
+                                            if(msg.icon=='success'){
+                                                window.location = msg.url;
+                                            }
+                                            
+                                        });
+                                    }
+                                });
+                                //return true;
+                            }
+                            else{
+                                swal({
+                                    'title':'Try again!',
+                                    'text': 'Please enter 6 digit zipcode',
+                                    'icon': 'error',
+                                });
+                            }
+                        }
+                        else{
+                            swal({
+                                'title':'Try again!',
+                                'text': 'Please enter 10 digit mobile number',
+                                'icon': 'error',
+                            });
+                        }
+                    }
+                    else{
+                        swal({
+                            'title':'Try again!',
+                            'text': 'Password and Confirm Password does not same',
+                            'icon': 'error',
+                        });
+                    }
+                }            
             }
-            
-        });
-    {% endif %}
+            else{
+                swal({
+                    'title':'Try again!',
+                    'text': 'Invalid Email...',
+                    'icon': 'error',
+                });
+            }
+        }
+        return false;
+    }
 </script>
 {% endblock %}
