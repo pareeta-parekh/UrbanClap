@@ -21,10 +21,13 @@ def register(request):
 
     if request.method == 'POST':
         if request.data['password'] != request.data['cpassword']:
-            title = 'Try again!'
-            message = ErrorMessages._meta.get_field('error_confirm_password').get_default()
-            icon = 'error'
-            return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
+            data = {
+                'title' :'Try again!',
+                'message' : ErrorMessages._meta.get_field('error_confirm_password').get_default(),
+                'icon' : 'error',
+            }
+            return Response(data)
+            # return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
         else:   
             addressline_1 = request.data['addline_1']
             addressline_2 = request.data['addline_2']
@@ -44,18 +47,26 @@ def register(request):
 
             serializers = CustomerSerializer(data=request.data, context=address)
             if serializers.is_valid():
-                title = 'Good Job!'
-                message = 'Registation Successfully...!'
-                icon = 'success'
                 serializers.save()
-                return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
+                data = {
+                    'title' : 'Good Job!',
+                    'message' : SuccessMessages._meta.get_field('success_registered').get_default(),
+                    'url':'/client/login/',
+                    'icon' : 'success',
+                }
+                return Response(data)
+                
+                # return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
                 # serializer.save()
                 # return Response("done!")
             
-            title = 'Try again!'
-            message = ErrorMessages._meta.get_field('error_email_exists').get_default()
-            icon = 'warning'
-            return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon})
+            data = {
+                'title' : 'Try again!',
+                'message' : ErrorMessages._meta.get_field('error_email_exists').get_default(),
+                'icon' : 'warning',
+            }
+            return Response(data)
+            # return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon})
             # return Response(
             #     serializer.errors,
             #     status=status.HTTP_400_BAD_REQUEST
@@ -92,39 +103,47 @@ def login(request):
 
                     request.session['token'] = token.key
                     data = {
+                        'token':token,
                         'title':'Good Job!',
                         'message': SuccessMessages._meta.get_field('success_login').get_default(),
                         'icon':'success',
                         'url': '/client/category/',
                     }
+                    return Response(data)
                     # return redirect('/serviceprovider/addservice/')
-                    return render(request, 'blank.html', data)
+                    # return render(request, 'blank.html', data)
                     # return Response({'message': 'You are LoggedIn...'})
 
                 else:
                     request.session['token'] = cust.token_id
                     data = {
+                        'token':servicePR.token_id,
                         'title':'Good Job!',
                         'message': SuccessMessages._meta.get_field('sucess_already_login').get_default(),
                         'icon':'success',
                         'url': '/client/category/',
                     }
+                    return Response(data)
                     # return redirect('/serviceprovider/addservice/')
-                    return render(request, 'blank.html', data)
+                    # return render(request, 'blank.html', data)
                     # return Response({'message': 'You are already LoggedIn...'})
 
             except ObjectDoesNotExist:
-                title = 'Try again!'
-                message = ErrorMessages._meta.get_field('error_password_credentials').get_default()
-                icon = 'error'
-                return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
+                data = {
+                    'title': 'Try again!',
+                    'message' : ErrorMessages._meta.get_field('error_password_credentials').get_default(),
+                    'icon' : 'error',
+                }
+                return Response(data)
+                # return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
         except ObjectDoesNotExist:
             data = {
                 'title': 'Try again!',
                 'message': ErrorMessages._meta.get_field('error_email_credentials').get_default(),
                 'icon': 'error',
             }
-            return render(request, 'login.html',data)
+            return Response(data)
+            # return render(request, 'login.html',data)
 
 @api_view(['GET'])
 def logout(request):
@@ -188,7 +207,8 @@ def updatepass(request):
                         'url': '/client/login/',
                         'icon': 'success',
                     }
-                    return render(request, 'blank.html',data)
+                    return Response(data)
+                    # return render(request, 'blank.html',data)
                 else:
                     data = {
                         'token':token,
@@ -196,17 +216,17 @@ def updatepass(request):
                         'message': 'Old Pasword invalid...',
                         'icon': 'warning',
                     }
-                    return render(request, 'updatePassword.html',data)
+                    return Response(data)
+                    # return render(request, 'updatePassword.html',data)
             except ObjectDoesNotExist:
                 # return Response({'message': 'Record not found'})
                 data = {
                     'token':token,
                     'title': 'Try again!!!',
                     'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
-                    'url': '/client/updatepassword/',
                     'icon': 'error',
                 }
-                return render(request, 'blank.html',data)
+                return Response(data)
         except KeyError:
             data = {
                 'title': 'Try again!!!',

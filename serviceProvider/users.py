@@ -22,26 +22,39 @@ def spregister(request):
         return render(request, 'serviceProvider/registration.html')
 
     if request.method == 'POST':
-        print(request.data)
+
         if request.data['password'] != request.data['cpassword']:
-            title = 'Try again!'
-            message = ErrorMessages._meta.get_field('error_confirm_password').get_default()
-            icon = 'error'
-            return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon} )
+            data = {
+                'title' :'Try again!',
+                'message' : ErrorMessages._meta.get_field('error_confirm_password').get_default(),
+                'icon' : 'error',
+            }
+            return Response(data)
+            # return render(request, 'serviceProvider/registration.html',data )
         else:   
             serializer = SPSerializer(data = request.data)
 
             if serializer.is_valid():
-                title = 'Good Job!'
-                message = SuccessMessages._meta.get_field('success_registered').get_default()
-                icon = 'success'
                 serializer.save()
-                return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon} )
+                data = {
+                    'title' : 'Good Job!',
+                    'message' : SuccessMessages._meta.get_field('success_registered').get_default(),
+                    'url':'/serviceprovider/login/',
+                    'icon' : 'success',
+                }
+                return Response(data)
+                # return render(request, 'serviceProvider/registration.html',data )
 
-            title = 'Try again!'
-            message = ErrorMessages._meta.get_field('error_email_exists').get_default()
-            icon = 'warning'
-            return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon})
+            data = {
+                'title' : 'Try again!',
+                'message' : ErrorMessages._meta.get_field('error_email_exists').get_default(),
+                'icon' : 'warning',
+            }
+            # # return render(request, 'serviceProvider/registration.html',{'title':title,'message': message, 'icon': icon})
+            # title = 'Try again!'
+            # message = ErrorMessages._meta.get_field('error_email_exists').get_default()
+            # icon = 'warning'
+            return Response(data)
             # return Response(
             #     serializer.errors,
             #     status=status.HTTP_400_BAD_REQUEST
@@ -79,41 +92,45 @@ def sprlogin(request):
 
                     request.session['token'] = token.key
                     data = {
+                        'token':token,
                         'title':'Good Job!',
                         'message': SuccessMessages._meta.get_field('success_login').get_default(),
                         'icon':'success',
                         'url': '/serviceprovider/addservice/',
                     }
                     # return redirect('/serviceprovider/addservice/')
-                    return render(request, 'serviceProvider/blank.html', data)
-                    # return Response({'message': 'You are LoggedIn...'})
+                    # return render(request, 'serviceProvider/blank.html', data)
+                    return Response(data)
 
                 else:
 
                     request.session['token'] = servicePR.token_id
                     data = {
+                        'token':servicePR.token_id,
                         'title':'Good Job!',
                         'message': SuccessMessages._meta.get_field('sucess_already_login').get_default(),
                         'icon':'success',
                         'url': '/serviceprovider/addservice/',
                     }
                     # return redirect('/serviceprovider/addservice/')
-                    return render(request, 'serviceProvider/blank.html', data)
-                    # return Response({'message': 'You are already LoggedIn...'})
+                    # return render(request, 'serviceProvider/blank.html', data)
+                    return Response(data)
             except ObjectDoesNotExist:
-                title = 'Try again!'
-                message = ErrorMessages._meta.get_field('error_password_credentials').get_default()
-                icon = 'error'
-                return render(request, 'serviceProvider/login.html',{'title':title,'message': message, 'icon': icon})
-
+                data = {
+                    'title': 'Try again!',
+                    'message' : ErrorMessages._meta.get_field('error_password_credentials').get_default(),
+                    'icon' : 'error',
+                }
+                # return render(request, 'serviceProvider/login.html',{'title':title,'message': message, 'icon': icon})
+                return Response(data)
         except ObjectDoesNotExist:
             data = {
                 'title': 'Try again!',
                 'message': ErrorMessages._meta.get_field('error_email_credentials').get_default(),
                 'icon': 'error',
             }
-            return render(request, 'serviceProvider/login.html',data)
-            # return Response({'message': 'Email not found...'})
+            # return render(request, 'serviceProvider/login.html',data)
+            return Response(data)
 
 @api_view(['GET'])
 def sprlogout(request):
@@ -183,7 +200,8 @@ def updatepass(request):
                         'url': '/serviceprovider/login/',
                         'icon': 'success',
                     }
-                    return render(request, 'serviceProvider/blank.html',data)
+                    # return render(request, 'serviceProvider/blank.html',data)
+                    return Response(data)
                 else:
                     
                     data = {
@@ -192,17 +210,18 @@ def updatepass(request):
                         'message': 'Old Pasword invalid...',
                         'icon': 'warning',
                     }
-                    return render(request, 'serviceProvider/updatePassword.html',data)
+                    # return render(request, 'serviceProvider/updatePassword.html',data)
+                    return Response(data)
             except ObjectDoesNotExist:
                 # return Response({'message': 'Record not found'})
                 data = {
                     'token':token,
                     'title': 'Try again!!!',
                     'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
-                    'url': '/serviceprovider/updatepassword/',
                     'icon': 'error',
                 }
-                return render(request, 'serviceProvider/blank.html',data)
+                return Response(data)
+                # return render(request, 'serviceProvider/blank.html',data)
         except KeyError:
             data = {
                 'title': 'Try again!!!',

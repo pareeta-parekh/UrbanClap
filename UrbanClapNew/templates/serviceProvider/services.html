@@ -10,52 +10,41 @@ Services
     <hr>
 
     <div class="row">
-        <form action="" method="post" class="col-4">{% csrf_token %}
+        <form action="" method="post" onsubmit="return checkServiceData()" class="col-4">{% csrf_token %}
             <div class="form-group">
                 <label>Service Category</label>
                 <br>
-                <select name="service_category" id="ser">
+                <select name="service_category" id="service_category">
                     <option value="Salon">Salon</option>
                     <option value="Carpenter">Carpenter</option>
                     <option value="Plumber">Plumber</option>
                 </select>
 
-                <!-- <div class="dropdown">
-                    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    -------Select--------
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <option class="dropdown-item" href="#" name="service_category" value="Salon">Salon</option>
-                    <option class="dropdown-item" href="#" name="service_category" value="Carpanter">Carpanter</option>
-                    <option class="dropdown-item" href="#" name="service_category" value="Plumber">Plumber</option>
-                    </div>
-                </div> -->
-                <!-- <input type="text" name="service_category" id="service_category" class="form-control" required> -->
             </div>
             <div class="form-group">
                 <label>Service Name</label>
                 <br>
-                <input type="text" name="service_name" id="service_name" class="form-control" required>
+                <input type="text" name="service_name" id="service_name" class="form-control" required placeholder="Service Name">
             </div>
             <div class="form-group">
                 <label>Service Description</label>
                 <br>
-                <input type="text" name="service_desc" id="service_desc" class="form-control" required>
+                <input type="text" name="service_desc" id="service_desc" class="form-control" required placeholder="Service Decription">
             </div>
             <div class="form-group">
                 <label>Service Cost</label>
                 <br>
-                <input type="text" name="service_cost" id="service_cost" class="form-control" required>
+                <input type="text" name="service_cost" id="service_cost" class="form-control" required placeholder="Service Cost">
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <div class="col-sm-2"></div>
+        <div class="col-sm-1"></div>
         <div class="row">
             {% for service in services %}
             {% if service.is_deleted == False %}
-                <div class="">
-                  <div class="card">
+                <div class="ml-4">
+                  <div class="card" style="width: 14rem;">
                         <a href="/serviceprovider/deletereq/{{service.id}}/">
                             <button type="submit" method='delete'>
                                 Delete
@@ -68,6 +57,7 @@ Services
                       <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
                     </div>
                   </div>
+                  <br>
                 </div>
                 <br>
                 {% endif %}
@@ -78,6 +68,75 @@ Services
     <br>
 </div>
 <script>
+    function checkServiceData(){
+        var service_category = document.getElementById('service_category').value;
+        var service_name = document.getElementById('service_name').value;
+        var service_desc = document.getElementById('service_desc').value;
+        var service_cost = document.getElementById('service_cost').value;
+        var isnum = /^\d+$/;
+        
+        
+        
+        
+        if (service_name == ""||service_name == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Service Name is require',
+                'icon': 'warning',
+            });
+        }
+        else if(service_desc == "" || service_desc == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Service Description is require',
+                'icon': 'warning',
+            });
+        }
+        else if(service_cost == "" || service_cost == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Service Cost is require',
+                'icon': 'warning',
+            });
+        }
+        else{
+            if (service_cost.match(isnum)){
+                
+                $.ajax({
+                    type:'POST',
+                    url:'/serviceprovider/addservice/',
+                    dataType: 'json',
+                    data : {
+                        'service_category':service_category,
+                        'service_name': service_name,
+                        'service_desc':service_desc,
+                        'service_cost':service_cost,
+                    },
+                    success:function(msg){
+                        swal({
+                            'title':msg.title,
+                            'text': msg.message,
+                            'icon': msg.icon,
+                        }).then(function(){
+                            if(msg.icon=='success'){
+                                window.location = msg.url;
+                            }
+                            
+                        });
+                    }
+                });
+                            
+            }
+            else{
+                swal({
+                    'title':'Try again!',
+                    'text': 'Please Enter Service Cost in digit',
+                    'icon': 'error',
+                });
+            }
+        }
+        return false;
+    }
     {% if message %}
         swal({
             title: "{{title}}",

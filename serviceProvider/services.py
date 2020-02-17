@@ -16,7 +16,6 @@ def addservice(request):
             token = request.session['token']
             print(token)
             try:
-
                 spobj = Serviceprovider.objects.get(token_id = token)
                 serviceLS = ServiceList.objects.filter(spid=spobj)
                 return render(request, 'serviceProvider/services.html', {'token':token,'services':serviceLS})
@@ -50,8 +49,8 @@ def addservice(request):
                                 'token':token,
                             }
                             # return redirect('/serviceprovider/addservice/')
-                            return render(request, 'serviceProvider/services.html', data)
-                            # return Response("Service Already Exists")
+                            # return render(request, 'serviceProvider/services.html', data)
+                            return Response(data)
 
                 condata.append(spobj)
                 if spobj.services == []:
@@ -74,8 +73,8 @@ def addservice(request):
                         'token':token,
                         'data': service.data,
                     }
-                    return render(request, 'serviceProvider/services.html', data)
-                    # return Response(service.data)
+                    # return render(request, 'serviceProvider/services.html', data)
+                    return Response(data)
                 for err_key in service.errors:
                     title = err_key
                     msg = service.errors[err_key][0]
@@ -90,8 +89,8 @@ def addservice(request):
                     'token':token,
                     'data': service.data,
                 }
-                return render(request, 'serviceProvider/services.html', data)
-
+                # return render(request, 'serviceProvider/services.html', data)
+                return Response(data)
             except ObjectDoesNotExist:
                 # return Response({'message': 'You are not Logged In...'})
                 return redirect('/serviceprovider/login/')
