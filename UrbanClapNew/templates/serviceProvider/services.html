@@ -50,28 +50,30 @@ Services
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <div class="col-sm-2"></div>
+        <div class="col-1"></div>
         <div class="row">
+            
             {% for service in services %}
-            {% if service.is_deleted == False %}
+                {% if service.is_deleted == False %}
                 <div class="">
-                  <div class="card">
+                  <div class="card ml-5">
                         <a href="/serviceprovider/deletereq/{{service.id}}/">
                             <button type="submit" method='delete'>
                                 Delete
                             </button>
                         </a>
-                    <div class="card-body">
-                      <h5 class="card-title">{{service.service_category}}</h5>
-                      <p class="card-text">{{service.service_name}}</p>
-                      <p class="card-text">{{service.service_desc}}</p>
-                      <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
-                    </div>
+                        <div class="card-body">
+                        <h5 class="card-title">{{service.service_category}}</h5>
+                        <p class="card-text">{{service.service_name}}</p>
+                        <p class="card-text">{{service.service_desc}}</p>
+                        <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
+                        </div>
                   </div>
+                  <br>
                 </div>
-                <br>
                 {% endif %}
             {% endfor %}
+                
         </div>
     </div>
     <br>
@@ -88,6 +90,9 @@ Services
             window.location = '{{url}}';
         }
         else if("{{icon}}" == "warning"){
+            window.location = '{{url}}';
+        }
+        else if("{{icon}}" == "error"){
             window.location = '{{url}}';
         }
         });

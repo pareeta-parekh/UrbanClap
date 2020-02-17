@@ -96,8 +96,9 @@ class Serviceprovider(models.Model):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
 class SuccessMessages(models.Model):
-    success_registered = models.CharField(max_length=255, default="Registered Successfully")
-    success_login = models.CharField(max_length=255, default="Login Successfull")
+    success_registered = models.CharField(max_length=255, default="Registration Successfully")
+    success_login = models.CharField(max_length=255, default="Login Successfully")
+    sucess_already_login = models.CharField(max_length=255, default="Already Logged in")
     success_add_service = models.CharField(max_length=255, default="Service Added Successfully")
     success_update_password = models.CharField(max_length=255, default="Password Updated Successfully")
     success_service_status = models.CharField(max_length=255, default="Service Status Updated Successfully")
@@ -107,12 +108,14 @@ class SuccessMessages(models.Model):
     success_comment = models.CharField(max_length=255, default="Comment added Successfully")
 
 class ErrorMessages(models.Model):
+    error_record_not_found = models.CharField(max_length=255, default="Record not found")
     error_registration = models.CharField(max_length=255, default="Registration Failed")
-    error_login = models.CharField(max_length=255, default="Login Failed")
+    error_confirm_password = models.CharField(max_length=255, default="Password and Confirm Password does not same")
+    # error_login = models.CharField(max_length=255, default="Login Failed")
     error_email_exists = models.CharField(max_length=255, default="Email Already Exists")
-    error_credentials = models.CharField(max_length=255, default="Email or Password incorrect")
+    error_email_credentials = models.CharField(max_length=255, default="Email incorrect")
+    error_password_credentials = models.CharField(max_length=255, default="Password incorrect")
     error_service_exists = models.CharField(max_length=255, default="Same service already exists in same category")
-    error_already_login = models.CharField(max_length=255, default="Already Logged in")
     error_service_delete = models.CharField(max_length=255, default="Service Could not be deleted")
     error_status_update = models.CharField(max_length=255, default="Service Status Could not be updated")
     error_password = models.CharField(max_length=255, default="Password Could not be updated")

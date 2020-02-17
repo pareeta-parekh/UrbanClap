@@ -1,5 +1,5 @@
 #users
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from serviceProvider.models import *
@@ -20,35 +20,46 @@ def register(request):
         return render(request, 'registration.html')
 
     if request.method == 'POST':
-        addressline_1 = request.data['addline_1']
-        addressline_2 = request.data['addline_2']
-        country = request.data['country']
-        state = request.data['state']
-        city = request.data['city']
-        zipcode = request.data['zipcode']
-
-        address = Address.objects.create(
-            addline_1=addressline_1,
-            addline_2=addressline_2,
-            country=country,
-            state=state,
-            city=city,
-            zipcode=zipcode
-        )
-
-        serializers = CustomerSerializer(data=request.data, context=address)
-        if serializers.is_valid():
-            title = 'Good Job!'
-            message = 'Registation Successfully...!'
-            icon = 'success'
-            serializers.save()
+        if request.data['password'] != request.data['cpassword']:
+            title = 'Try again!'
+            message = ErrorMessages._meta.get_field('error_confirm_password').get_default()
+            icon = 'error'
             return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
-            # serializer.save()
-            # return Response("done!")
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+        else:   
+            addressline_1 = request.data['addline_1']
+            addressline_2 = request.data['addline_2']
+            country = request.data['country']
+            state = request.data['state']
+            city = request.data['city']
+            zipcode = request.data['zipcode']
+
+            address = Address.objects.create(
+                addline_1=addressline_1,
+                addline_2=addressline_2,
+                country=country,
+                state=state,
+                city=city,
+                zipcode=zipcode
             )
+
+            serializers = CustomerSerializer(data=request.data, context=address)
+            if serializers.is_valid():
+                title = 'Good Job!'
+                message = 'Registation Successfully...!'
+                icon = 'success'
+                serializers.save()
+                return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon} )
+                # serializer.save()
+                # return Response("done!")
+            
+            title = 'Try again!'
+            message = ErrorMessages._meta.get_field('error_email_exists').get_default()
+            icon = 'warning'
+            return render(request, 'registration.html',{'title':title,'message': message, 'icon': icon})
+            # return Response(
+            #     serializer.errors,
+            #     status=status.HTTP_400_BAD_REQUEST
+            #     )
 
 
 @api_view(['GET','POST'])
@@ -82,7 +93,7 @@ def login(request):
                     request.session['token'] = token.key
                     data = {
                         'title':'Good Job!',
-                        'message':'You are LoggedIn...',
+                        'message': SuccessMessages._meta.get_field('success_login').get_default(),
                         'icon':'success',
                         'url': '/client/category/',
                     }
@@ -94,7 +105,7 @@ def login(request):
                     request.session['token'] = cust.token_id
                     data = {
                         'title':'Good Job!',
-                        'message':'You are already LoggedIn...',
+                        'message': SuccessMessages._meta.get_field('sucess_already_login').get_default(),
                         'icon':'success',
                         'url': '/client/category/',
                     }
@@ -104,24 +115,42 @@ def login(request):
 
             except ObjectDoesNotExist:
                 title = 'Try again!'
-                message = 'Password does not match...'
+                message = ErrorMessages._meta.get_field('error_password_credentials').get_default()
                 icon = 'error'
                 return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
         except ObjectDoesNotExist:
-            title = 'Try again!'
-            message = 'Password does not match...'
-            icon = 'error'
-            return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
+            data = {
+                'title': 'Try again!',
+                'message': ErrorMessages._meta.get_field('error_email_credentials').get_default(),
+                'icon': 'error',
+            }
+            return render(request, 'login.html',data)
 
 @api_view(['GET'])
-def logout(request, token):
+def logout(request):
     try:
-        cust = Customer.objects.get(token_id = token)
-        cust.token_id = None
-        cust.save()
-        return Response({'message': 'Logged out...'})
-    except ObjectDoesNotExist:
-        return Response({'message': 'Record not found...'})
+        token = request.session['token']
+        try:
+            cust = Customer.objects.get(token_id = token)
+            cust.token_id = None
+            cust.save()
+            del request.session['token']
+            return redirect('/client/login/')
+            # return Response({'message': 'Logged out...'})
+        except ObjectDoesNotExist:
+            title = 'Try again!'
+            message = ErrorMessages._meta.get_field('error_record_not_found').get_default()
+            icon = 'error'
+            return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
+            # return Response({'message': 'Record not found...'})
+    except KeyError:
+        data = {
+            'title': 'Try again!',
+            'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+            'url': '/client/login/',
+            'icon': 'error',  
+        }
+        return render(request, 'blank.html', data)
 
 
 @api_view(['PUT'])

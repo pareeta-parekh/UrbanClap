@@ -96,4 +96,10 @@ def srpr_chat(request, cust_id, service_id):
 
             return Response({'message': 'You cannot write message until services not accepted...'})
         except ObjectDoesNotExist:
-            return Response({'message': 'Record not found...'})
+            # return Response({'message': 'Record not found...'})
+            data = {
+                'title': 'Try again!!!',
+                'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+                'icon': 'error',
+            }
+            return render(request, 'serviceProvider/chat.html',data)
