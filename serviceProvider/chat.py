@@ -57,7 +57,10 @@ def srpr_chat(request, cust_id, service_id):
             
             ch = 0
             for apsr in srprObj.applied_service:
-                appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                try:
+                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                except:
+                    pass
                 print("applSR", appliedSR.status)
 
                 if apsr.status == 'Accepted' and appliedSR.status == 'Accepted':
@@ -67,7 +70,7 @@ def srpr_chat(request, cust_id, service_id):
                         text=request.data['message']
                     )
 
-                    if apsr.customer_id == clientObj and service_id == apsr.service_id.sid:
+                    if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False:
 
                         apsr.chat.append(appserCommentObj)
                         appliedSR.chat.append(appserCommentObj)

@@ -71,22 +71,30 @@ def client_chat(request, srpr_id, service_id):
         try:
             token = request.session['token']
             clientObj = Customer.objects.get(token_id = token)
-            
+            print("clientObj", clientObj)
             srprObj = Serviceprovider.objects.get(id = srpr_id)
+            print("Sprid", srprObj)
             # services = ServiceList.objects.get(sid=service_id)
             
             ch = 0
             for apsr in srprObj.applied_service:
-                appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                print("serviceid", apsr.service_id.sid)
+                print("cid", apsr.customer_id.id)
+                try:
+                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                except:
+                    pass
+                print("appl", appliedSR)
                 if apsr.status == 'Accepted' and appliedSR.status == 'Accepted':
+                    print("Accepted")
                     appserCommentObj = Appsercomment.objects.create(
                         user_type = "Client",
                         user_id = clientObj.id,
                         text = request.data['message']
                     )
                     
-                    if apsr.customer_id == clientObj and service_id == apsr.service_id.sid:
-                        
+                    if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False:
+                        print("in if append")
                         apsr.chat.append(appserCommentObj)
                         appliedSR.chat.append(appserCommentObj)
                         appliedSR.save()
@@ -113,5 +121,5 @@ def client_chat(request, srpr_id, service_id):
                 return Response({'message': 'No applied services found..!'})
 
             return Response({'message': 'Your request is not accepted...'})
-        except ObjectDoesNotExist:
+        except:
             return Response({'message': 'Record not found...'})    
