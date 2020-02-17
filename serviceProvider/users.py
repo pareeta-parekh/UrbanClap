@@ -146,30 +146,60 @@ def sprlogout(request):
         
    
 
-@api_view(['PUT'])
+@api_view(['GET','POST'])
 def updatepass(request):
-    if request.method == 'PUT':
+    if request.method == 'GET':
+        try:
+            token = request.session['token']
+            try:
+                spobj = Serviceprovider.objects.get(token_id = token)
+                return render(request, 'serviceProvider/updatePassword.html', {'token':token})
+            except ObjectDoesNotExist:
+                data = {
+                    'title': 'Try again!!!',
+                    'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
+                    'url': '/serviceprovider/updatepass/',
+                    'icon': 'error',
+                }
+                return render(request, 'serviceProvider/blank.html',data)
+        except KeyError:
+            return redirect('/serviceprovider/login/')
+
+    if request.method == 'POST':
         try:
             token = request.session['token']
             try:
                 spobj = Serviceprovider.objects.get(token_id = token)
                 
+
                 if spobj.password == request.POST['old_password']:
                     spobj.password = request.POST['new_password']
                     spobj.save()
-                # return Response("Passwword Updated")
-                data = {
-                    'title': 'Good Job!',
-                    'message': SuccessMessages._meta.get_field('success_update_password').get_default(),
-                    'icon': 'success',
-                }
-                return render(request, 'serviceProvider/updatepassword.html',data)
+                    # return Response("Passwword Updated")
+                    data = {
+                        'token':token,
+                        'title': 'Good Job!',
+                        'message': SuccessMessages._meta.get_field('success_update_password').get_default(),
+                        'url': '/serviceprovider/login/',
+                        'icon': 'success',
+                    }
+                    return render(request, 'serviceProvider/blank.html',data)
+                else:
+                    
+                    data = {
+                        'token':token,
+                        'title': 'Try again!',
+                        'message': 'Old Pasword invalid...',
+                        'icon': 'warning',
+                    }
+                    return render(request, 'serviceProvider/updatePassword.html',data)
             except ObjectDoesNotExist:
                 # return Response({'message': 'Record not found'})
                 data = {
+                    'token':token,
                     'title': 'Try again!!!',
                     'message': ErrorMessages._meta.get_field('error_record_not_found').get_default(),
-                    'url': '/serviceprovider/updatepass/',
+                    'url': '/serviceprovider/updatepassword/',
                     'icon': 'error',
                 }
                 return render(request, 'serviceProvider/blank.html',data)

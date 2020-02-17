@@ -190,10 +190,10 @@ def deleteservice(request,sid):
                         'token':token,
                         'title': 'Good Job!',
                         'message': SuccessMessages._meta.get_field('success_delete_request').get_default(),
-                        'url': '/serviceprovider/appliedservices/',
+                        'url': '/serviceprovider/addservice/',
                         'icon': 'success',
                     }
-                    return render(request, 'serviceProvider/appliedService.html',data)
+                    return render(request, 'serviceProvider/services.html',data)
                 else:
                     return Response("Inavlid Function")
 
