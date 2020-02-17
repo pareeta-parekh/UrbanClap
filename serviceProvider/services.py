@@ -98,12 +98,6 @@ def addservice(request):
         except KeyError:
             return redirect('/serviceprovider/login/')
 
-            except ObjectDoesNotExist:
-                # return Response({'message': 'You are not Logged In...'})
-                return redirect('/serviceprovider/login/')
-        except KeyError:
-            return redirect('/serviceprovider/login/')
-
 
 @api_view(['POST'])
 def updateservice(request):

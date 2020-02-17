@@ -45,33 +45,22 @@ Services
             <div class="form-group">
                 <label>Service Cost</label>
                 <br>
-                <input type="text" name="service_cost" id="service_cost" maxlength="3" class="form-control" required>
+                <input type="text" name="service_cost" id="service_cost" class="form-control" required>
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-<<<<<<< HEAD
         <div class="col-sm-2"></div>
         <div class="row">
             {% for service in services %}
             {% if service.is_deleted == False %}
                 <div class="">
                   <div class="card">
-=======
-        <div class="col-1"></div>
-        <div class="row">
-            
-            {% for service in services %}
-                {% if service.is_deleted == False %}
-                <div class="">
-                  <div class="card ml-5">
->>>>>>> bhautik
                         <a href="/serviceprovider/deletereq/{{service.id}}/">
                             <button type="submit" method='delete'>
                                 Delete
                             </button>
                         </a>
-<<<<<<< HEAD
                     <div class="card-body">
                       <h5 class="card-title">{{service.service_category}}</h5>
                       <p class="card-text">{{service.service_name}}</p>
@@ -83,20 +72,6 @@ Services
                 <br>
                 {% endif %}
             {% endfor %}
-=======
-                        <div class="card-body">
-                        <h5 class="card-title">{{service.service_category}}</h5>
-                        <p class="card-text">{{service.service_name}}</p>
-                        <p class="card-text">{{service.service_desc}}</p>
-                        <a href="#" class="btn btn-primary">{{service.service_cost}}</a>
-                        </div>
-                  </div>
-                  <br>
-                </div>
-                {% endif %}
-            {% endfor %}
-                
->>>>>>> bhautik
         </div>
     </div>
     <br>
@@ -115,12 +90,9 @@ Services
         else if("{{icon}}" == "warning"){
             window.location = '{{url}}';
         }
-<<<<<<< HEAD
-=======
         else if("{{icon}}" == "error"){
             window.location = '{{url}}';
         }
->>>>>>> bhautik
         });
     {% endif %}
         
