@@ -64,10 +64,18 @@ def categoryShow(request):
     if request.method == 'GET':
         try:
             token = request.session['token']
-            cust = Customer.objects.get(token_id = token)
-            return render(request, "category.html", {'token':token})
-        except:
-            return Response("Plz Login..")
+            try:
+                
+                cust = Customer.objects.get(token_id = token)
+                return render(request, "category.html", {'token':token})
+            except ObjectDoesNotExist:
+                title = 'Try again!'
+                message = ErrorMessages._meta.get_field('error_record_not_found').get_default()
+                icon = 'error'
+                return render(request, 'login.html',{'title':title,'message': message, 'icon': icon})
+                # return Response("Plz Login..")
+        except KeyError:
+            return redirect('/client/login/')
     if request.method == 'POST':
         try:
             token = request.session['token']
@@ -257,20 +265,25 @@ def deleteService(request):
 
 @api_view(['GET'])
 def req_service(request):
-    print("req service")
-    token = request.session['token']
-    cust_id = Customer.objects.get(token_id=token)
-    print(cust_id)
-    if request.method == 'GET':
-        print("in method get")
-        cust = []
-        for obj in cust_id.services_requested:
-            if obj.is_deleted == False:
-                cust.append(obj)
-            print(obj.is_deleted)
-        print(cust_id.services_requested)
-        context = {"c_req": cust, 'token':token}
-        return render(request, "showReqService.html", context)
+    # print("req service")
+    try:
+        token = request.session['token']
+        cust_id = Customer.objects.get(token_id=token)
+        print(cust_id)
+        if request.method == 'GET':
+            print("in method get")
+            cust = []
+            for obj in cust_id.services_requested:
+                sobj = ServiceList.objects.filter(spid = obj.service_provider, sid = obj.service_id.sid)
+                for objs in sobj:
+                    if obj.is_deleted == False and objs.is_deleted == False:
+                        cust.append(obj)
+                print(obj.is_deleted)
+            print(cust_id.services_requested)
+            context = {"c_req": cust, 'token':token}
+            return render(request, "showReqService.html", context)
+    except KeyError:
+        return redirect('/client/login/')
 
     # if request.method == 'POST':
     #     print("in method POST")

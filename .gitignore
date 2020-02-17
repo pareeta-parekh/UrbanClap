@@ -6,3 +6,4 @@ client/migrations/
 serviceProvider/__pycache__/
 serviceProvider/migrations/
 UrbanClapNew/__pycache__/
+requirements.txt
