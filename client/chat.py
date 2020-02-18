@@ -36,7 +36,7 @@ def client_chat(request, srpr_id, service_id):
                 #     return render(request, 'chat.html', data)
                     # return Response({'message': 'No chat found..'})
 
-                if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False:
+                if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False and apsr.status == "Accepted":
                     print("Chat ", apsr.chat)
                     
                     # data = []
@@ -81,7 +81,11 @@ def client_chat(request, srpr_id, service_id):
                 print("serviceid", apsr.service_id.sid)
                 print("cid", apsr.customer_id.id)
                 try:
-                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid,
+                    spid = srprObj,
+                    customer_id = apsr.customer_id,
+                    is_deleted = False,
+                    status = "Accepted")
                 except:
                     pass
                 print("appl", appliedSR)

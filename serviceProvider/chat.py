@@ -22,7 +22,7 @@ def srpr_chat(request, cust_id, service_id):
             for apsr in srprObj.applied_service:
                 # if apsr.chat == []:
                 #     return Response({'message': 'No chat found..'})
-                if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False:
+                if apsr.customer_id == clientObj and service_id == apsr.service_id.sid and apsr.is_deleted == False and apsr.status == "Accepted":
                     # data = []
 
                     # for chats in apsr.chat:
@@ -58,9 +58,14 @@ def srpr_chat(request, cust_id, service_id):
             ch = 0
             for apsr in srprObj.applied_service:
                 try:
-                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid, spid = srprObj, customer_id = apsr.customer_id, is_deleted = False)
+                    appliedSR = Appliedservice.objects.get(service_id=apsr.service_id.sid,
+                    spid = srprObj,
+                    customer_id = apsr.customer_id,
+                    is_deleted = False,
+                    status = "Accepted")
                 except:
-                    pass
+                    print("Except")
+                    continue
                 print("applSR", appliedSR.status)
 
                 if apsr.status == 'Accepted' and appliedSR.status == 'Accepted':

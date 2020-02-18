@@ -29,9 +29,9 @@ Requested Services
                 <br>
                 {% if service.status == 'Pending' %}
                 <button type="button" id="Accepted_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
-                onclick="del(this.id)" class="btn btn-warning">Accept</button>
+                onclick="del(this.id)" class="btn btn-primary">Accept</button>
                 <button type="button" id="Reject_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
-                onclick="del(this.id)" class="btn btn-warning">Reject</button>
+                onclick="del(this.id)" class="btn btn-danger">Reject</button>
                 {% endif %}
                 <!-- <button type="button" id="del_{{service.service_id.id}}_{{service.asid}}_{{service.customer_id.id}}"
                 onclick="del(this.id)" class="btn btn-warning">Update Status</button> -->
@@ -60,8 +60,6 @@ Requested Services
         }
         });
     {% endif %}
-
-
 
         function del(id){
             var ids = id.split("_");

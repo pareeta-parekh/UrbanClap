@@ -10,11 +10,11 @@ Login
     <form action="" method="post" onsubmit="return checkloginData()">{% csrf_token %}
         <div class="fomr-group">
             <label>Email</label>
-            <input type="email" name="email" id="email" class="form-control" required>
+            <input type="email" name="email" id="email" class="form-control" required placeholder="For ex. yourname@email.com">
         </div>
         <div class="fomr-group">
             <label>Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control" required minlength="8" required placeholder="Password">
         </div>
         <br>
         <button type="submit" class="btn btn-success">Login</button>

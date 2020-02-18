@@ -92,7 +92,7 @@ def sprlogin(request):
 
                     request.session['token'] = token.key
                     data = {
-                        'token':token,
+                        'token':token.key,
                         'title':'Good Job!',
                         'message': SuccessMessages._meta.get_field('success_login').get_default(),
                         'icon':'success',
