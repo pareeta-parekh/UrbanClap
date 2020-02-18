@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+Requested Services
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3> Services Requested </h3>
+    <hr>
+        {% if not c_req %}
+            <h2>No applied service...</h2>
+        {% endif %}  
+        {% for objects in c_req %}
+        <div id="div_{{objects.status}}_{{objects.service_id.id}}_{{objects.cust_id.id}}_{{objects.service_provider.id}}">
+            <form id="frm_{{objects.service_id.id}}_{{objects.service_provider.id}}" method="POST" action=".">{% csrf_token %}
+                {% if objects.is_deleted == False %}
+                    <li> {{objects.service_name}} </li>
+                    <li> {{objects.service_price}} </li>
+                    <li> {{objects.status}} </li>
+                    <br>
+                    {% if objects.status == "Pending" %}
+                    <script>
+                        console.log("in if")
+                        $(document).ready(function(){
+                            $("#{{objects.status}}_{{objects.service_id.id}}_{{objects.cust_id.id}}_{{objects.service_provider.id}}").show();
+                        });
+                    </script>
+                    <button type="button" class="btn btn-danger" id="{{objects.status}}_{{objects.service_id.id}}_{{objects.cust_id.id}}_{{objects.service_provider.id}}" onclick="deleteService(this.id)">DELETE</button>
+                    <br><br>
+                    {% elif objects.status == "Accepted" %}
+                    <script>
+                        console.log("else")
+                        $(document).ready(function(){
+                            $("#{{objects.service_id.id}}_{{objects.cust_id.id}}_{{objects.service_provider.id}}").hide();
+                        });
+                        
+                    </script>
+                    <a href="/client/chat/{{objects.service_provider.id}}/{{objects.service_id.sid}}/" type="button" class="btn btn-success">Chat</a>
+                    
+                    {% else %}
+                    <script>
+                        console.log("else")
+                        $(document).ready(function(){
+                            $("#{{objects.service_id.id}}_{{objects.cust_id.id}}_{{objects.service_provider.id}}").hide();
+                        });
+                    </script>
+                    {% endif %}
+                    
+            </form>
+            <div id="form_{{objects.cust_id.id}}_{{objects.service_id.id}}_{{objects.service_provider.id}}_{{objects.csid}}">
+            <form method="POST" action=".">{% csrf_token %}
+
+                    {% if objects.status == "Completed" %}
+                    Enter Your Comments: <input type="text" name="{{objects.service_name}}"
+                     id="cmt_{{objects.cust_id.id}}_{{objects.service_id.id}}_{{objects.service_provider.id}}_{{objects.csid}}">
+                    <br><br>
+                    Enter Your Ratings : <select id="rating_{{objects.cust_id.id}}_{{objects.service_id.id}}_{{objects.service_provider.id}}_{{objects.csid}}">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                    <br><br>
+                    <button type="button" id="{{objects.cust_id.id}}_{{objects.service_id.id}}_{{objects.service_provider.id}}_{{objects.csid}}"
+                     onclick="commentService(this.id)">Comment</button>
+                        <script>
+                            console.log("complete if")
+                            $(document).ready(function(){
+                                $("#{{objects.service_name}}").show();
+                                $("#{{objects.service_name}}_{{service_id.id}}").show();
+                            });
+                        </script>
+                    {% else %}
+                        <script>
+                            console.log("complete else")
+                            $(document).ready(function(){
+                                $("#{{objects.service_name}}").hide();
+                                $("#{{objects.service_name}}_{{service_id.id}}").hide();
+                            });
+                        </script>
+                    {% endif %}
+                {% endif %}
+            </form>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+<script>
+    function deleteService(ids)
+    {
+        var sids = ids.split("_")
+        console.log(sids);
+        
+        $.ajax({
+                    type:"get",
+                    url: "/client/del_service/",
+                    data:{
+                            service_id : sids[1],
+                            customer_id : sids[2],
+                            service_provider : sids[3],
+                        }
+                })
+        document.getElementById("div_"+ids).remove()
+    }
+
+    function commentService(cid)
+    {
+        console.log("commnt id" , cid);
+        commnt = cid.split("_")
+        console.log(commnt[3]);
+        comDesc = document.getElementById("cmt_"+cid).value;
+        console.log(comDesc);
+        rate =document.getElementById("rating_"+cid).value;
+        console.log(rate)
+        
+        
+        $.ajax({
+                    type:"get",
+                    url: "/client/comments/",
+                    data:{
+                            customer_id : commnt[0],
+                            service_id : commnt[1],
+                            service_provider : commnt[2],
+                            desc : comDesc,
+                            rate : rate,
+                            csid : commnt[3]
+                        },success: function (data) {
+                            document.getElementById("cmt_"+cid).value = " ";
+                            document.getElementById("rating_"+cid).value = "1";
+                            alert(data);
+                        }
+                })
+    }
+</script>
+{% endblock %}

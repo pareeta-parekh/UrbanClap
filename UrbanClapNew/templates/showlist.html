@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Show checkboxes:</h1>
+<form method="POST" action=".">
+{% for objects in services %}  
+    <input type="checkbox" name="{{objects.service_name}}" id="{{objects.service_name}}" value="{{objects.service_name}}">
+    <label for="{{objects.service_name}}"> {{objects.service_name}} </label><br> 
+    <input type="hidden" name="{{objects.service_cost}}" value="{{objects.service_cost}}">{{objects.service_cost}}
+    <br>
+    <br>
+    {{objects.service_desc}}
+    <br>
+    <br>
+{% endfor %}
+
+<button type="submit" >SUBMIT</button>
+</form>
+</body>
+</html>
