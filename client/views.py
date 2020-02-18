@@ -16,24 +16,26 @@ def comments(request):
         spid = Serviceprovider.objects.get(id = int(request.GET['service_provider']))
         desc = request.GET['desc']
         rating = request.GET['rate']
+        csid = request.GET['csid']
 
         print(cid)
         print(sid)
         print(spid)
         print(desc)
         print(rating)
+        print(csid)
 
         try:
             print("in try")
-            abc = CustComments.objects.get(cid = cid , sid = sid , spid = spid)
+            abc = CustComments.objects.get(csid = csid, cid = cid , sid = sid , spid = spid)
             print("abc" , abc)
-            context = {'context' : "Already Commented!"}
-            return render( request , "showReqService.html" , context)
+            return Response("Already Commented")
         except:
             print("in except")
             cdesc = CustComments.objects.create(
                 sid = sid,
                 spid = spid,
+                csid = csid,
                 cid = cid,
                 comment_desc = desc,
                 rating = rating
@@ -48,5 +50,5 @@ def comments(request):
             custService.comments.append(cdesc)
             # print(custService.comments)
             custService.save()
-            return Response("commented")
+            return Response("Comment Successfull")
 

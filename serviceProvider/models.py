@@ -7,6 +7,7 @@ class CustComments(models.Model):
     sid = models.ForeignKey('Servicelist', on_delete=models.CASCADE)
     spid = models.ForeignKey('Serviceprovider', on_delete=models.CASCADE)
     cid = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    csid = models.IntegerField(blank=False, null=False)
     comment_desc = models.CharField(max_length=255, blank=False, null=False)
     rating = models.IntegerField(blank=False, null=False)
 
@@ -21,6 +22,7 @@ class Address(models.Model):
 
 
 class CustService(models.Model):
+    csid = models.IntegerField(blank=False, null=False)
     # cust_id = models.IntegerField(null=False, blank=False)
     cust_id = models.ForeignKey('Customer', on_delete=models.CASCADE)
     service_name = models.CharField(max_length=255, blank=False, null=False)

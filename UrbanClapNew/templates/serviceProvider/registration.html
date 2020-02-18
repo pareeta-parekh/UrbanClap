@@ -9,61 +9,61 @@ Service Provider Registration
     <h3>Service Provider Registration</h3>
     <hr>
 
-    <form action="" method="post">{% csrf_token %}
+    <form action="" onsubmit="return checkRegistrationData()" method="post">{% csrf_token %}
         <div class="form-group">
             <label>Full Name</label>
             <br>
-            <input type="text" name="full_name" id="full_name" class="form-control" required>
+            <input type="text" name="full_name" id="full_name" class="form-control" required  placeholder="Your name">
         </div>
         <div class="form-group">
             <label>Email</label>
             <br>
-            <input type="email" name="email" id="email" class="form-control" required>
+            <input type="email" name="email" id="email" class="form-control" required  placeholder="For ex. yourname@email.com">
         </div>
         <div class="form-group">
             <label>Password</label>
             <br>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control" minlength="8" required  placeholder="Password">
         </div>
         <div class="form-group">
             <label>Confirm Password</label>
             <br>
-            <input type="password" name="cpassword" id="cpassword" class="form-control" required>
+            <input type="password" name="cpassword" id="cpassword" class="form-control" minlength="8" required placeholder="Confirm Password">
         </div>
         <div class="form-group">
             <label>Mobile no</label>
             <br>
-            <input type="text" name="mobile" id="mobile" maxlength="10" class="form-control" required>
+            <input type="text" name="mobile" id="mobile" minlength="10" maxlength="10" class="form-control" required placeholder="Mobile number">
         </div>
         <div class="form-group">
             <label>Address line 1</label>
             <br>
-            <input type="text" name="addline_1" id="addline_1" class="form-control" required>
+            <input type="text" name="addline_1" id="addline_1" class="form-control" required placeholder="Address Line 1">
         </div>
         <div class="form-group">
             <label>Address line 2</label>
             <br>
-            <input type="text" name="addline_2" id="addline_2" class="form-control" required>
+            <input type="text" name="addline_2" id="addline_2" class="form-control" required placeholder="Address Line 2">
         </div>
         <div class="form-group">
             <label>Country</label>
             <br>
-            <input type="text" name="country" id="country" class="form-control" required>
+            <input type="text" name="country" id="country" class="form-control" required placeholder="Country">
         </div>
         <div class="form-group">
             <label>State</label>
             <br>
-            <input type="text" name="state" id="state" class="form-control" required>
+            <input type="text" name="state" id="state" class="form-control" required placeholder="State">
         </div>
         <div class="form-group">
             <label>City</label>
             <br>
-            <input type="text" name="city" id="city" class="form-control" required>
+            <input type="text" name="city" id="city" class="form-control" required placeholder="City">
         </div>
         <div class="form-group">
             <label>Zipcode</label>
             <br>
-            <input type="text" name="zipcode" id="zipcode" class="form-control" maxlength="6" required>
+            <input type="text" name="zipcode" id="zipcode" class="form-control" minlength="6" maxlength="6" required placeholder="Zipcode">
         </div>
         <br>
         <button type="submit" class="btn btn-primary">Register</button>
@@ -73,18 +73,109 @@ Service Provider Registration
 </div>
 
 <script>
-    {% if message %}
-        swal({
-            title: "{{title}}",
-            text: "{{message}}",
-            icon: "{{icon}}",
-        }).then(
-            function(){
-            if("{{icon}}" == 'success'){
-                
-            window.location = '/serviceprovider/login';
+    function checkRegistrationData(){
+        var full_name = document.getElementById('full_name').value;
+        var email = document.getElementById('email').value;
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var password = document.getElementById('password').value;
+        var cpassword = document.getElementById('cpassword').value;
+        var mobile = document.getElementById('mobile').value;
+        var phoneformat = /^\d{10}$/;
+        var addline_1 = document.getElementById('addline_1').value;
+        var addline_2 = document.getElementById('addline_2').value;
+        var country = document.getElementById('country').value;
+        var state = document.getElementById('state').value;
+        var city = document.getElementById('city').value;
+        var zipcode = document.getElementById('zipcode').value;
+        var zipcodeformat = /^\d{6}$/;
+        
+        if (email == ""||email == null){
+            swal({
+                'title':'Try again!',
+                'text': 'Email required',
+                'icon': 'warning',
+            });
+        }
+        else{
+            if (email.match(mailformat)){
+                if (password.length < 8){
+                    swal({
+                        'title':'Try again!',
+                        'text': 'Enter Password at least 8 character password',
+                        'icon': 'error',
+                    });
+                }
+                else{
+                    if (password == cpassword){
+                        if(mobile.match(phoneformat)){
+                            if(zipcode.match(zipcodeformat)){
+                                $.ajax({
+                                    type:'POST',
+                                    url:'/serviceprovider/register/',
+                                    dataType: 'json',
+                                    data : {
+                                        'full_name':full_name,
+                                        'email': email,
+                                        'password':password,
+                                        'cpassword':cpassword,
+                                        'mobile':mobile,
+                                        'addline_1':addline_1,
+                                        'addline_2':addline_2,
+                                        'country':country,
+                                        'state':state,
+                                        'city':city,
+                                        'zipcode':zipcode,
+                                    },
+                                    success:function(msg){
+                                        swal({
+                                            'title':msg.title,
+                                            'text': msg.message,
+                                            'icon': msg.icon,
+                                        }).then(function(){
+                                            if(msg.icon=='success'){
+                                                window.location = msg.url;
+                                            }
+                                            
+                                        });
+                                    }
+                                });
+                                //return true;
+                            }
+                            else{
+                                swal({
+                                    'title':'Try again!',
+                                    'text': 'Please enter 6 digit zipcode',
+                                    'icon': 'error',
+                                });
+                            }
+                        }
+                        else{
+                            swal({
+                                'title':'Try again!',
+                                'text': 'Please enter 10 digit mobile number',
+                                'icon': 'error',
+                            });
+                        }
+                    }
+                    else{
+                        swal({
+                            'title':'Try again!',
+                            'text': 'Password and Confirm Password does not same',
+                            'icon': 'error',
+                        });
+                    }
+                }            
             }
-        });
-    {% endif %}
+            else{
+                swal({
+                    'title':'Try again!',
+                    'text': 'Invalid Email...',
+                    'icon': 'error',
+                });
+            }
+        }
+        return false;
+    }
+   
 </script>
 {% endblock %}
