@@ -1,0 +1,24 @@
+{{context}}
+<center>
+    <table border="2" style="margin-top: 50px;">
+        <thead>
+            <th>Service Category</th>
+            <th>Service Name</th>
+            <th>Service Desc</th>
+            <th>Service Cost</th>
+        </thead>
+        <tbody>
+            {% for sr in context %}
+            <tr>
+                <td>{{sr.service_category}}</td>
+                <td>{{sr.service_name}}</td>
+                <td>{{sr.service_desc}}</td>
+                <td>{{sr.service_cost}}</td>
+            </tr>
+                
+            {% endfor %}
+            <tr></tr>
+        </tbody>
+    </table>
+
+</center>
