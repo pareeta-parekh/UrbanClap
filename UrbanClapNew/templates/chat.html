@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Chat
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="col-sm-6">
+
+    
+        <div class="card">
+            
+            <div class="card-body">
+                {% if chat_found == True %}
+                    {% for msg in message %}
+                        {% if msg.user_type == 'Client' %}
+                        <h5 class="card-title text-right">{{msg.text}}</h5>
+                        {% elif msg.user_type == 'Service Provider' %}
+                        <h5 class="card-title ">{{msg.text}}</h5>
+                        {% endif %}
+                        
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="card-footer ">
+                <form action="" method="POST">
+                    <div class="form-group">
+                        <input type="text" name="message" id="message" class="form-control" required>
+                        
+                    </div>
+                    <button class="btn btn-primary">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
